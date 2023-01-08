@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".FriendListActivity">
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:orientation="horizontal"
+        android:paddingLeft="20dp">
+
+        <ImageButton
+            android:layout_width="25dp"
+            android:layout_height="40dp"
+            android:background="@color/white"
+            android:scaleType="fitCenter"
+            android:layout_marginTop="10dp"
+            android:src="@drawable/backbtnimg" />
+
+
+        <ImageButton
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_marginTop="26dp"
+            android:layout_marginLeft="317dp"
+            android:src="@drawable/addfriend"
+            android:background="@color/white"
+            android:scaleType="centerCrop"
+            />
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="23dp"
+            android:text="친구 목록"
+            android:textSize="22sp"
+            android:textColor="@color/black"
+            android:textStyle="bold"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="23dp"
+            android:text="친구들의 일정을 확인해보세요"
+            android:textSize="14sp"
+            android:textColor="#6F6F6F"/>
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="22dp" />
+
+        <androidx.appcompat.widget.SearchView
+            android:id="@+id/friendListSearchView"
+            android:layout_width="314dp"
+            android:layout_height="40dp"
+            android:layout_marginLeft="23dp"
+            android:layout_marginRight="23dp"
+            android:layout_gravity="center"
+            android:background="#F2F4F6"
+            app:queryHint="검색어를 입력하시오"
+            app:iconifiedByDefault="false" />
+    </LinearLayout>
+    
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/friendRecyclerView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_marginTop="15dp"
+        app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
+       />
+
+</LinearLayout>

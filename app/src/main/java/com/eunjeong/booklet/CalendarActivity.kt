@@ -13,6 +13,9 @@ import com.kizitonwose.calendar.core.*
 import com.kizitonwose.calendar.view.MonthDayBinder
 import com.kizitonwose.calendar.view.MonthHeaderFooterBinder
 import com.kizitonwose.calendar.view.ViewContainer
+import kotlinx.android.synthetic.main.activity_calendar.*
+import kotlinx.android.synthetic.main.activity_simple.*
+import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.Month
 import java.time.YearMonth
@@ -24,6 +27,7 @@ class CalendarActivity : AppCompatActivity() {
     private lateinit var binding: ActivityCalendarBinding
     private val titleRes: Int? = null
     private val today = LocalDate.now()
+    private var selectedDate: LocalDate? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -40,6 +44,34 @@ class CalendarActivity : AppCompatActivity() {
         class DayViewContainer(view: View) : ViewContainer(view) {
             lateinit var day: CalendarDay
             val textView = CalendarDayLayoutBinding.bind(view).calendarDayText
+
+            init {
+                view.setOnClickListener {
+                    // Check the day position as we do not want to select in or out dates.
+                    if (day.position == DayPosition.MonthDate) {
+                        // Keep a reference to any previous selection
+                        // in case we overwrite it and need to reload it.
+                        val currentSelection = selectedDate
+                        if (currentSelection == day.date) {
+                            // If the user clicks the same date, clear selection.
+                            selectedDate = null
+                            // Reload this date so the dayBinder is called
+                            // and we can REMOVE the selection background.
+                            mainCalendarView.notifyDateChanged(currentSelection)
+                        } else {
+                            selectedDate = day.date
+                            // Reload the newly selected date so the dayBinder is
+                            // called and we can ADD the selection background.
+                            mainCalendarView.notifyDateChanged(day.date)
+                            if (currentSelection != null) {
+                                // We need to also reload the previously selected
+                                // date so we can REMOVE the selection background.
+                                mainCalendarView.notifyDateChanged(currentSelection)
+                            }
+                        }
+                    }
+                }
+            }
         }
 
         class MonthHeaderViewContainer(view: View): ViewContainer(view) {
@@ -70,7 +102,7 @@ class CalendarActivity : AppCompatActivity() {
 
 
 
-        // dayBinder, 주말 & 이번달 아닌 day 텍스트 색상 변경
+        // dayBinder
         binding.mainCalendarView.dayBinder = object : MonthDayBinder<DayViewContainer> {
             // Called only when a new container is needed.
             override fun create(view: View) = DayViewContainer(view)
@@ -78,6 +110,8 @@ class CalendarActivity : AppCompatActivity() {
             // Called every time we need to reuse a container.
             override fun bind(container: DayViewContainer, data: CalendarDay) {
                 container.textView.text = data.date.dayOfMonth.toString()
+
+                // 주말, 이번 달 아닌 day 색상 변경
                 if (data.position == DayPosition.MonthDate && data.date.dayOfWeek.value == 6) {
                     container.textView.setTextColor(Color.BLUE)
                 }
@@ -91,6 +125,18 @@ class CalendarActivity : AppCompatActivity() {
                     container.textView.setTextColor(Color.BLACK)
                 }
 
+                //
+                val day = data
+                val textView = container.textView
+                container.day = data
+                textView.text = day.date.dayOfMonth.toString()
+
+                if (day.position == DayPosition.MonthDate) {
+                    textView.visibility = View.VISIBLE
+                    if (day.date == today) {
+                        textView.setBackgroundResource(R.drawable.selectedcircle)
+                    }
+                }
             }
 
         }
@@ -108,9 +154,6 @@ class CalendarActivity : AppCompatActivity() {
         titlesContainer.children
             .map { it as TextView }
             .forEachIndexed { index, textView ->
-//                val dayOfWeek = daysOfWeek[index]
-//                val title = dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
-//                textView.text = title
                 currentMonth.month.displayText(short = false)
             }
 
@@ -147,6 +190,12 @@ class CalendarActivity : AppCompatActivity() {
                 binding.mainCalendarView.smoothScrollToMonth(it.yearMonth.nextMonth)
             }
         }
+
+
+        //
+
+
+
 
 
 

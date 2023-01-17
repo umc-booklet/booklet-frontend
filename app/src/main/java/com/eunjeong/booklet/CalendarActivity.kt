@@ -1,11 +1,11 @@
 package com.eunjeong.booklet
 
 import android.graphics.Color
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.children
 import com.eunjeong.booklet.databinding.ActivityCalendarBinding
 import com.eunjeong.booklet.databinding.CalendarDayLayoutBinding
@@ -14,17 +14,17 @@ import com.kizitonwose.calendar.view.MonthDayBinder
 import com.kizitonwose.calendar.view.MonthHeaderFooterBinder
 import com.kizitonwose.calendar.view.ViewContainer
 import kotlinx.android.synthetic.main.activity_calendar.*
-import kotlinx.android.synthetic.main.activity_simple.*
-import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.Month
 import java.time.YearMonth
 import java.time.format.TextStyle
 import java.util.*
 
+
 class CalendarActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityCalendarBinding
+    private lateinit var tbinding: CalendarDayLayoutBinding
     private val titleRes: Int? = null
     private val today = LocalDate.now()
     private var selectedDate: LocalDate? = null
@@ -32,6 +32,7 @@ class CalendarActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityCalendarBinding.inflate(layoutInflater)
+        tbinding = CalendarDayLayoutBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         val daysOfWeek = daysOfWeek() // Available in the library
@@ -46,12 +47,14 @@ class CalendarActivity : AppCompatActivity() {
             val textView = CalendarDayLayoutBinding.bind(view).calendarDayText
 
             init {
+                // 달력 한 칸 클릭했을 때 동작
                 view.setOnClickListener {
                     // Check the day position as we do not want to select in or out dates.
                     if (day.position == DayPosition.MonthDate) {
                         // Keep a reference to any previous selection
                         // in case we overwrite it and need to reload it.
                         val currentSelection = selectedDate
+
                         if (currentSelection == day.date) {
                             // If the user clicks the same date, clear selection.
                             selectedDate = null
@@ -69,6 +72,7 @@ class CalendarActivity : AppCompatActivity() {
                                 mainCalendarView.notifyDateChanged(currentSelection)
                             }
                         }
+
                     }
                 }
             }
@@ -125,18 +129,28 @@ class CalendarActivity : AppCompatActivity() {
                     container.textView.setTextColor(Color.BLACK)
                 }
 
-                //
+                // 오늘 날짜 원으로 표시 & single day select (square border)
                 val day = data
-                val textView = container.textView
+                val textView = container.textView // 달력 속 text
                 container.day = data
                 textView.text = day.date.dayOfMonth.toString()
+                val dayView = container.view // 달력 한 칸 view
 
                 if (day.position == DayPosition.MonthDate) {
                     textView.visibility = View.VISIBLE
-                    if (day.date == today) {
-                        textView.setBackgroundResource(R.drawable.selectedcircle)
+                    if (day.date == today) { // 오늘 날짜 고정으로 원 배경 표시
+                        textView.setBackgroundResource(R.drawable.today_circle)
+                    }
+
+                    if (day.date == selectedDate) {
+                        dayView.setBackgroundResource(R.drawable.selected_border)
+                    }
+                    else if (day.date != selectedDate) {
+                        dayView.background = null
                     }
                 }
+
+
             }
 
         }
@@ -177,7 +191,6 @@ class CalendarActivity : AppCompatActivity() {
             }
         }
 
-
         // xml < > 버튼으로 달력 스크롤하기
         binding.btnGoPreviousMonth.setOnClickListener {
             binding.mainCalendarView.findFirstVisibleMonth()?.let {
@@ -193,9 +206,6 @@ class CalendarActivity : AppCompatActivity() {
 
 
         //
-
-
-
 
 
 

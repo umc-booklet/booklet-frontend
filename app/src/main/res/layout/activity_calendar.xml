@@ -23,7 +23,7 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:src="@drawable/icon_friendlist"
-                android:background="@android:color/transparent"
+                android:background="?attr/selectableItemBackground"
                 android:layout_marginEnd="5dp"
                 android:layout_marginTop="20dp"
                 android:scaleType="fitXY"
@@ -35,7 +35,7 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:src="@drawable/icon_addfriend"
-                android:background="@android:color/transparent"
+                android:background="?attr/selectableItemBackground"
                 android:layout_marginEnd="30dp"
                 android:layout_marginTop="20dp"
                 android:scaleType="fitXY"
@@ -47,7 +47,7 @@
                 android:layout_width="30dp"
                 android:layout_height="30dp"
                 android:src="@drawable/icon_menu"
-                android:background="@android:color/transparent"
+                android:background="?attr/selectableItemBackground"
                 android:layout_marginEnd="20dp"
                 android:layout_marginTop="20dp"
                 android:scaleType="fitXY"
@@ -129,8 +129,8 @@
             android:id="@+id/mainCalendarView"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginLeft="10dp"
-            android:layout_marginRight="10dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
             android:layout_marginBottom="20dp"
             android:background="@drawable/shadow"
             app:cv_dayViewResource="@layout/calendar_day_layout"
@@ -151,11 +151,11 @@
         app:borderWidth="0dp"
         android:src="@drawable/icon_add"
         app:tint="@null"
-        app:maxImageSize="30dp"
+        app:maxImageSize="35dp"
         android:elevation="3dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintRight_toRightOf="parent"
-        app:shapeAppearanceOverlay="@style/ShapeAppearance.Material3.MediumComponent" />
+        app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Material3.FloatingActionButton" />
 
 
 </androidx.constraintlayout.widget.ConstraintLayout>

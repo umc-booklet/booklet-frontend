@@ -123,7 +123,6 @@ class GroupChoiceAdapter(var friendList: ArrayList<GroupFriend>):
                 recyclerViewItem.checked = itemView.checkboxGroup.isChecked
                 notifyItemChanged(adapterPosition)
                 mSelectedItem = position
-                //notifyItemRangeChanged(9, friendList.size)
             }
         }
     }

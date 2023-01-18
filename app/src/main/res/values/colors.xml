@@ -11,4 +11,6 @@
     <color name="headerGrey">#E0E0E0</color>
     <color name="arrowGrey">#ABABAB</color>
     <color name="grey">#808080</color>
+    <color name="satBlue">#000FFF</color>
+    <color name="sunRed">#FF0000</color>
 </resources>

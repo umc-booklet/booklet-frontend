@@ -16,17 +16,10 @@
         <activity
             android:name=".CalendarActivity"
             android:exported="true">
-
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-
         <activity
             android:name=".SignUpActivity"
             android:exported="true">
@@ -34,15 +27,27 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-
         <activity
             android:name=".LoginActivity"
             android:exported="true">
             <meta-data
                 android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".FriendAddActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Booklet.NoActionBar">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+
+            <meta-data
+                android:name="android.app.lib_name"
                 android:value=""/>
         </activity>
-
         <activity
             android:name=".GroupChoiceActivity"
             android:exported="true">
@@ -50,7 +55,6 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-
         <activity
             android:name=".FriendListActivity"
             android:exported="true">
@@ -58,26 +62,22 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-
-
         <activity
             android:name=".SimpleActivity"
             android:exported="true"
             android:theme="@style/Theme.Booklet.NoActionBar">
-
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
-
         <activity
             android:name=".MainActivity"
             android:exported="true">
+            <!--<intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-<!--             <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--             </intent-filter>-->
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>-->
 
             <meta-data
                 android:name="android.app.lib_name"

@@ -106,12 +106,13 @@
         app:layout_constraintStart_toEndOf="@+id/auto"
         app:layout_constraintTop_toBottomOf="@+id/pwdt" />
 
-    <Button
+    <androidx.appcompat.widget.AppCompatButton
         android:id="@+id/signinbtn"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginHorizontal="30dp"
         android:background="@drawable/login_button_round"
+        android:backgroundTint="#D5D6D7"
         android:text="로그인"
         android:textColor="@color/white"
         android:textSize="13sp"

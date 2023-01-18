@@ -5,5 +5,4 @@ class Friend(
     val img: Int,
     val name: String,
     val id: String
-) {
-}
+)

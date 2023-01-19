@@ -12,19 +12,16 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Booklet"
         tools:targetApi="31">
-
+        <activity
+            android:name=".ManageMyProfileActivity"
+            android:exported="true">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
         <activity
             android:name=".CalendarActivity"
             android:exported="true">
-<<<<<<< HEAD
-
-            <!--            <intent-filter>-->
-            <!--                <action android:name="android.intent.action.MAIN" />-->
-            <!--                <category android:name="android.intent.category.LAUNCHER" />-->
-            <!--            </intent-filter>-->
-
-=======
->>>>>>> 6c12f41809df4b8b75d88d43b48e58c13008e54b
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
@@ -47,15 +44,9 @@
             android:name=".FriendAddActivity"
             android:exported="true"
             android:theme="@style/Theme.Booklet.NoActionBar">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
-
             <meta-data
                 android:name="android.app.lib_name"
-                android:value=""/>
+                android:value="" />
         </activity>
         <activity
             android:name=".GroupChoiceActivity"
@@ -82,20 +73,11 @@
         <activity
             android:name=".MainActivity"
             android:exported="true">
-<<<<<<< HEAD
-
             <intent-filter>
-=======
-            <!--<intent-filter>
->>>>>>> 6c12f41809df4b8b75d88d43b48e58c13008e54b
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
-<<<<<<< HEAD
             </intent-filter>
-=======
-            </intent-filter>-->
->>>>>>> 6c12f41809df4b8b75d88d43b48e58c13008e54b
 
             <meta-data
                 android:name="android.app.lib_name"

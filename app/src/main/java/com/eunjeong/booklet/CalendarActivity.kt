@@ -2,13 +2,19 @@ package com.eunjeong.booklet
 
 import android.graphics.Color
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.GravityCompat
 import androidx.core.view.children
+import androidx.drawerlayout.widget.DrawerLayout
+import androidx.navigation.findNavController
 import com.eunjeong.booklet.databinding.ActivityCalendarBinding
 import com.eunjeong.booklet.databinding.CalendarDayLayoutBinding
+import com.google.android.material.navigation.NavigationView
 import com.kizitonwose.calendar.core.*
 import com.kizitonwose.calendar.view.MonthDayBinder
 import com.kizitonwose.calendar.view.MonthHeaderFooterBinder
@@ -21,7 +27,7 @@ import java.time.format.TextStyle
 import java.util.*
 
 
-class CalendarActivity : AppCompatActivity() {
+class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var binding: ActivityCalendarBinding
     private lateinit var tbinding: CalendarDayLayoutBinding
@@ -204,14 +210,18 @@ class CalendarActivity : AppCompatActivity() {
             }
         }
 
+<<<<<<< HEAD
 
         //
         //
 
 
+=======
+        // 네비게이션 메뉴 초기화
+        initNavigationMenu()
+>>>>>>> 4db45a535ca7b348311873a528a4a679e3078c3f
 
     }
-
 
     // 달력 옮길 때 상단 title(연, 월) 업데이트
     private fun updateTitle() {
@@ -224,5 +234,30 @@ class CalendarActivity : AppCompatActivity() {
     fun Month.displayText(short: Boolean = true): String {
         val style = if (short) TextStyle.SHORT else TextStyle.FULL
         return getDisplayName(style, Locale.getDefault())
+    }
+
+
+    // Navigation Drawer 메뉴를 초기화하는 함수
+    private fun initNavigationMenu() {
+        val drawerLayout: DrawerLayout = binding.drawerLayout
+        val navView: NavigationView = binding.navView
+
+        navView.setNavigationItemSelectedListener(this)
+
+        // 메뉴(설정) 버튼 눌렀을 때 Navigation drawrer 보이기
+        binding.btnMenu.setOnClickListener {
+            drawerLayout.openDrawer(GravityCompat.END) }
+
+        // 네비게이션 헤더 메뉴에 클릭 이벤트 연결
+        val headerView = navView.getHeaderView(0)
+        val back = headerView.findViewById<ImageButton>(R.id.backbtn)
+        back.setOnClickListener { // drawer 닫기
+            drawerLayout.closeDrawer(GravityCompat.END)
+        }
+    }
+
+    // Drawer content 내 메뉴 클릭 이벤트 처리하는 함수
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        TODO("Not yet implemented")
     }
 }

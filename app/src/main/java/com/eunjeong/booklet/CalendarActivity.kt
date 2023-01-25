@@ -84,7 +84,7 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
             }
         }
 
-        class MonthHeaderViewContainer(view: View): ViewContainer(view) {
+        class MonthHeaderViewContainer(view: View) : ViewContainer(view) {
             val binding = ActivityCalendarBinding.bind(view)
         }
 
@@ -111,7 +111,6 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         }
 
 
-
         // dayBinder
         binding.mainCalendarView.dayBinder = object : MonthDayBinder<DayViewContainer> {
             // Called only when a new container is needed.
@@ -124,14 +123,11 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
                 // 주말, 이번 달 아닌 day 색상 변경
                 if (data.position == DayPosition.MonthDate && data.date.dayOfWeek.value == 6) {
                     container.textView.setTextColor(Color.BLUE)
-                }
-                else if (data.position == DayPosition.MonthDate && data.date.dayOfWeek.value == 7) {
+                } else if (data.position == DayPosition.MonthDate && data.date.dayOfWeek.value == 7) {
                     container.textView.setTextColor(Color.RED)
-                }
-                else if (data.position != DayPosition.MonthDate) {
+                } else if (data.position != DayPosition.MonthDate) {
                     container.textView.setTextColor(Color.GRAY)
-                }
-                else {
+                } else {
                     container.textView.setTextColor(Color.BLACK)
                 }
 
@@ -150,8 +146,7 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
                     if (day.date == selectedDate) {
                         dayView.setBackgroundResource(R.drawable.selected_border)
-                    }
-                    else if (day.date != selectedDate) {
+                    } else if (day.date != selectedDate) {
                         dayView.background = null
                     }
                 }
@@ -168,7 +163,6 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         binding.mainCalendarView.scrollToMonth(currentMonth)
 
 
-
         // titlesContainer (연, 월 표시)
         val titlesContainer = findViewById<ViewGroup>(R.id.yearMonthContainer)
         titlesContainer.children
@@ -179,23 +173,25 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
 
         // monthHeaderBinder (일 ~ 월 표시)
-        binding.mainCalendarView.monthHeaderBinder = object : MonthHeaderFooterBinder<MonthViewContainer> {
-            override fun create(view: View) = MonthViewContainer(view)
-            override fun bind(container: MonthViewContainer, data: CalendarMonth) {
-                // Remember that the header is reused so this will be called for each month.
-                // However, the first day of the week will not change so no need to bind
-                // the same view every time it is reused.
-                if (container.titlesContianer.tag == null) {
-                    container.titlesContianer.tag = data.yearMonth
-                    container.titlesContianer.children.map { it as TextView }
-                        .forEachIndexed { index, textView ->
-                            val dayOfWeek = daysOfWeek[index]
-                            val title = dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
-                            textView.text = title
-                        }
+        binding.mainCalendarView.monthHeaderBinder =
+            object : MonthHeaderFooterBinder<MonthViewContainer> {
+                override fun create(view: View) = MonthViewContainer(view)
+                override fun bind(container: MonthViewContainer, data: CalendarMonth) {
+                    // Remember that the header is reused so this will be called for each month.
+                    // However, the first day of the week will not change so no need to bind
+                    // the same view every time it is reused.
+                    if (container.titlesContianer.tag == null) {
+                        container.titlesContianer.tag = data.yearMonth
+                        container.titlesContianer.children.map { it as TextView }
+                            .forEachIndexed { index, textView ->
+                                val dayOfWeek = daysOfWeek[index]
+                                val title =
+                                    dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
+                                textView.text = title
+                            }
+                    }
                 }
             }
-        }
 
         // xml < > 버튼으로 달력 스크롤하기
         binding.btnGoPreviousMonth.setOnClickListener {
@@ -209,19 +205,8 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
                 binding.mainCalendarView.smoothScrollToMonth(it.yearMonth.nextMonth)
             }
         }
-
-<<<<<<< HEAD
-
-        //
-        //
-
-
-=======
-        // 네비게이션 메뉴 초기화
-        initNavigationMenu()
->>>>>>> 4db45a535ca7b348311873a528a4a679e3078c3f
-
     }
+
 
     // 달력 옮길 때 상단 title(연, 월) 업데이트
     private fun updateTitle() {
@@ -235,7 +220,6 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         val style = if (short) TextStyle.SHORT else TextStyle.FULL
         return getDisplayName(style, Locale.getDefault())
     }
-
 
     // Navigation Drawer 메뉴를 초기화하는 함수
     private fun initNavigationMenu() {

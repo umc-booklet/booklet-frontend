@@ -12,6 +12,7 @@
         <!-- Status bar color. -->
         <item name="android:statusBarColor">?attr/colorPrimaryVariant</item>
         <!-- Customize your theme here. -->
+        <item name="bottomSheetDialogTheme">@style/AppBottomSheetDialogTheme</item>
     </style>
 
     <style name="Theme.Booklet.NoActionBar">
@@ -22,6 +23,22 @@
     <style name="Theme.Booklet.AppBarOverlay" parent="ThemeOverlay.AppCompat.Dark.ActionBar" />
 
     <style name="Theme.Booklet.PopupOverlay" parent="ThemeOverlay.AppCompat.Light" />
+
+    <!-- swtich ON color -->
+    <style name="SwitchTheme" parent="Theme.AppCompat">
+        <item name="android:colorControlActivated">#0075FF</item>
+        <item name="colorSwitchThumbNormal">#F4F4F4</item>
+        <item name="android:colorForeground">#808080</item>
+    </style>
+
+    <!-- bottomsheetdialog round corner -->
+    <style name="AppBottomSheetDialogTheme" parent="Theme.Design.Light.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/AppModalStyle</item>
+    </style>
+
+    <style name="AppModalStyle" parent="Widget.Design.BottomSheet.Modal">
+        <item name="android:background">@drawable/bottom_sheet_dialog_corner</item>
+    </style>
 
 
 </resources>

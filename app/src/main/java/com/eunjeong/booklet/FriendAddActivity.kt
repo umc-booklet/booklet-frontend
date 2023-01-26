@@ -1,6 +1,7 @@
 package com.eunjeong.booklet
 
 import android.R
+import android.content.Intent
 import android.os.Bundle
 import android.view.MenuItem
 import androidx.appcompat.app.ActionBar
@@ -39,7 +40,12 @@ class FriendAddActivity : AppCompatActivity() {
             .replace(viewBinding.friendcontainer.id, FriendListFragment())
             .commitAllowingStateLoss()
 
+        // 친구 요청 버튼 클릭시 액티비티 교체
+        viewBinding.requestbtn.setOnClickListener {
+            val intent = Intent(this, FriendRequestActivity::class.java)
+            startActivity(intent)
         }
+    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.getItemId()) {

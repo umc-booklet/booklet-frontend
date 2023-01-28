@@ -23,6 +23,7 @@ import com.kizitonwose.calendar.view.MonthDayBinder
 import com.kizitonwose.calendar.view.MonthHeaderFooterBinder
 import com.kizitonwose.calendar.view.ViewContainer
 import kotlinx.android.synthetic.main.activity_calendar.*
+import java.text.SimpleDateFormat
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.Month
@@ -55,6 +56,7 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
     var nonStringStartDate: LocalDate? = null
     var nonStringEndDate: LocalDate? = null
     var checkEventDate = true
+    var p = 0
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -326,9 +328,24 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
                                 if (nonStringStartDate != nonStringEndDate) {
                                     if (day.date == nonStringStartDate) {
                                         checkEventDate = true
+
+                                        if (firstEvent.background == null) {
+                                            p = 1
+                                        }
+                                        else if (secondEvent.background == null) {
+                                            p = 2
+                                        }
+                                        else if (thirdEvent.background == null) {
+                                            p = 3
+                                        }
+                                        else if (fourthEvent.background == null) {
+                                            p = 4
+                                        }
+
                                         eventNum.text = eventTitle
                                         eventNum.setBackgroundResource(R.drawable.event_on_calendar_corner_pink_start)
                                         eventNum.setTextColor(ContextCompat.getColor(applicationContext, R.color.eventpinktext))
+
                                     }
                                     else if (day.date.isBefore(nonStringEndDate) && day.date.isAfter(nonStringStartDate)) {
                                         eventNum.setBackgroundResource(R.drawable.event_on_calendar_corner_pink_middle)
@@ -337,6 +354,7 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
                                     else if (day.date == nonStringEndDate) {
                                         eventNum.setBackgroundResource(R.drawable.event_on_calendar_corner_pink_end)
                                         eventNum.setTextColor(ContextCompat.getColor(applicationContext, R.color.eventpinktext))
+                                        p = 0
                                         checkEventDate = false
                                     }
                                     nonStringStartDate = null
@@ -368,6 +386,19 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
                                 if (nonStringStartDate != nonStringEndDate) {
                                     if (day.date == nonStringStartDate) {
                                         checkEventDate = true
+                                        if (firstEvent.background == null) {
+                                            p = 1
+                                        }
+                                        else if (secondEvent.background == null) {
+                                            p = 2
+                                        }
+                                        else if (thirdEvent.background == null) {
+                                            p = 3
+                                        }
+                                        else if (fourthEvent.background == null) {
+                                            p = 4
+                                        }
+
                                         eventNum.text = eventTitle
                                         eventNum.setBackgroundResource(R.drawable.event_on_calendar_corner_green_start)
                                         eventNum.setTextColor(ContextCompat.getColor(applicationContext, R.color.eventgreentext))
@@ -379,6 +410,7 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
                                     else if (day.date == nonStringEndDate) {
                                         eventNum.setBackgroundResource(R.drawable.event_on_calendar_corner_green_end)
                                         eventNum.setTextColor(ContextCompat.getColor(applicationContext, R.color.eventgreentext))
+                                        p = 0
                                         checkEventDate = false
                                     }
                                     nonStringStartDate = null
@@ -410,6 +442,19 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
                                 if (nonStringStartDate != nonStringEndDate) {
                                     if (day.date == nonStringStartDate) {
                                         checkEventDate = true
+                                        if (firstEvent.background == null) {
+                                            p = 1
+                                        }
+                                        else if (secondEvent.background == null) {
+                                            p = 2
+                                        }
+                                        else if (thirdEvent.background == null) {
+                                            p = 3
+                                        }
+                                        else if (fourthEvent.background == null) {
+                                            p = 4
+                                        }
+
                                         eventNum.text = eventTitle
                                         eventNum.setBackgroundResource(R.drawable.event_on_calendar_corner_purple_start)
                                         eventNum.setTextColor(ContextCompat.getColor(applicationContext, R.color.eventpurpletext))
@@ -421,6 +466,7 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
                                     else if (day.date == nonStringEndDate) {
                                         eventNum.setBackgroundResource(R.drawable.event_on_calendar_corner_purple_end)
                                         eventNum.setTextColor(ContextCompat.getColor(applicationContext, R.color.eventpurpletext))
+                                        p = 0
                                         checkEventDate = false
                                     }
                                     nonStringStartDate = null
@@ -449,40 +495,70 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
                             }
                         }
 
+
                         // 현재 달력 한 칸에 있는 일정의 위치를 반영하여 일정 추가하는 함수
                         fun addEventOnPosition() {
-                            if (firstEvent.background == null) {
-                                addEvent(firstEvent, eventColor)
+                            if (nonStringStartDate != nonStringEndDate) {
+
+                                when (p) {
+
+                                    0 -> {
+                                        if (firstEvent.background == null) {
+                                            addEvent(firstEvent, eventColor)
+                                        }
+                                        else if (secondEvent.background == null) {
+                                            addEvent(secondEvent, eventColor)
+                                        }
+                                        else if (thirdEvent.background == null) {
+                                            addEvent(thirdEvent, eventColor)
+                                        }
+                                        else if (fourthEvent.background == null) {
+                                            addEvent(fourthEvent, eventColor)
+                                        }
+
+                                    }
+                                    1 -> addEvent(firstEvent, eventColor)
+                                    2 -> addEvent(secondEvent, eventColor)
+                                    3 -> addEvent(thirdEvent, eventColor)
+                                    4 -> addEvent(fourthEvent, eventColor)
+                                }
+
                             }
-                            else if (secondEvent.background == null) {
-                                addEvent(secondEvent, eventColor)
-                            }
-                            else if (thirdEvent.background == null) {
-                                addEvent(thirdEvent, eventColor)
-                            }
-                            else if (fourthEvent.background == null) {
-                                addEvent(fourthEvent, eventColor)
+
+                            else {
+                                if (firstEvent.background == null) {
+                                    addEvent(firstEvent, eventColor)
+                                }
+                                else if (secondEvent.background == null) {
+                                    addEvent(secondEvent, eventColor)
+                                }
+                                else if (thirdEvent.background == null) {
+                                    addEvent(thirdEvent, eventColor)
+                                }
+                                else if (fourthEvent.background == null) {
+                                    addEvent(fourthEvent, eventColor)
+                                }
                             }
 
                         }
 
                         //dummy data
-//                        if (day.date == today) {
-//                            firstEvent.text = "일정 1"
-//                            firstEvent.setBackgroundResource(R.drawable.event_on_calendar_corner_pink_start)
-//                            firstEvent.setTextColor(ContextCompat.getColor(applicationContext, R.color.eventpinktext))
-//
-//                            secondEvent.text = "일정 2"
-//                            secondEvent.setBackgroundResource(R.drawable.event_on_calendar_corner_green_start)
-//                            secondEvent.setTextColor(ContextCompat.getColor(applicationContext, R.color.eventgreentext))
-//                        }
-//                        else if (day.date == today.plusDays(1)) {
-//                            firstEvent.setBackgroundResource(R.drawable.event_on_calendar_corner_pink_middle)
-//                            secondEvent.setBackgroundResource(R.drawable.event_on_calendar_corner_green_end)
-//                        }
-//                        else if (day.date == today.plusDays(2)) {
-//                            firstEvent.setBackgroundResource(R.drawable.event_on_calendar_corner_pink_end)
-//                        }
+                        if (day.date == today) {
+                            firstEvent.text = "일정 1"
+                            firstEvent.setBackgroundResource(R.drawable.event_on_calendar_corner_pink_start)
+                            firstEvent.setTextColor(ContextCompat.getColor(applicationContext, R.color.eventpinktext))
+
+                            secondEvent.text = "일정 2"
+                            secondEvent.setBackgroundResource(R.drawable.event_on_calendar_corner_green_start)
+                            secondEvent.setTextColor(ContextCompat.getColor(applicationContext, R.color.eventgreentext))
+                        }
+                        else if (day.date == today.plusDays(1)) {
+                            firstEvent.setBackgroundResource(R.drawable.event_on_calendar_corner_pink_middle)
+                            secondEvent.setBackgroundResource(R.drawable.event_on_calendar_corner_green_end)
+                        }
+                        else if (day.date == today.plusDays(2)) {
+                            firstEvent.setBackgroundResource(R.drawable.event_on_calendar_corner_pink_end)
+                        }
 
                         if (checkEventDate) {
                             addEventOnPosition()

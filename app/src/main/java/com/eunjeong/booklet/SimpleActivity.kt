@@ -23,8 +23,6 @@ class SimpleActivity : AppCompatActivity() {
 
         changeWeekendColor() // 토요일은 파란색, 일요일은 빨간색으로 색상 변경
         makeDotToday() // 오늘 날짜 아래에 dot 생성
-
-
     }
 
     fun changeWeekendColor() {

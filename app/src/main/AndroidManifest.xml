@@ -12,6 +12,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Booklet"
         tools:targetApi="31">
+
         <activity
             android:name=".AddScheduleActivity"
             android:exported="false">
@@ -19,14 +20,23 @@
                 android:name="android.app.lib_name"
                 android:value="" />
         </activity>
+
+        <activity
+            android:name=".FriendRequestActivity"
+            android:exported="false"
+            android:label="@string/title_activity_friend_request"
+            android:theme="@style/Theme.Booklet.NoActionBar" />
+        <activity
+            android:name=".ManageMyProfileActivity"
+            android:exported="true">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
         <activity
             android:name=".CalendarActivity"
             android:exported="true">
-<!--            <intent-filter>-->
-<!--                <action android:name="android.intent.action.MAIN" />-->
 
-<!--                <category android:name="android.intent.category.LAUNCHER" />-->
-<!--            </intent-filter>-->
 
             <meta-data
                 android:name="android.app.lib_name"
@@ -35,6 +45,22 @@
         <activity
             android:name=".SignUpActivity"
             android:exported="true">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".LoginActivity"
+            android:exported="true">
+            <meta-data
+                android:name="android.app.lib_name"
+                android:value="" />
+        </activity>
+        <activity
+            android:name=".FriendAddActivity"
+            android:exported="true"
+            android:theme="@style/Theme.Booklet.NoActionBar">
+
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />
@@ -64,12 +90,11 @@
         <activity
             android:name=".MainActivity"
             android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
-             <intent-filter>
-                 <action android:name="android.intent.action.MAIN" />
-                 <category android:name="android.intent.category.LAUNCHER" />
-             </intent-filter>
-
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
             <meta-data
                 android:name="android.app.lib_name"
                 android:value="" />

@@ -3,16 +3,21 @@ package com.eunjeong.booklet
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import android.widget.TextView
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
+import androidx.core.view.GravityCompat
 import androidx.core.view.children
+import androidx.drawerlayout.widget.DrawerLayout
 import com.eunjeong.booklet.databinding.ActivityCalendarBinding
 import com.eunjeong.booklet.databinding.CalendarDayLayoutBinding
+import com.google.android.material.navigation.NavigationView
 import com.kizitonwose.calendar.core.*
 import com.kizitonwose.calendar.view.MonthDayBinder
 import com.kizitonwose.calendar.view.MonthHeaderFooterBinder
@@ -27,7 +32,7 @@ import java.time.format.TextStyle
 import java.util.*
 
 
-class CalendarActivity : AppCompatActivity() {
+class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
 
     private lateinit var binding: ActivityCalendarBinding
     private lateinit var tbinding: CalendarDayLayoutBinding
@@ -49,6 +54,7 @@ class CalendarActivity : AppCompatActivity() {
     var nonStrEndDate = ""
     var nonStringStartDate: LocalDate? = null
     var nonStringEndDate: LocalDate? = null
+    var checkEventDate = true
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,26 +80,16 @@ class CalendarActivity : AppCompatActivity() {
             init {
                 // 달력 한 칸 클릭했을 때 동작
                 view.setOnClickListener {
-                    // Check the day position as we do not want to select in or out dates.
                     if (day.position == DayPosition.MonthDate) {
-                        // Keep a reference to any previous selection
-                        // in case we overwrite it and need to reload it.
                         val currentSelection = selectedDate
 
                         if (currentSelection == day.date) {
-                            // If the user clicks the same date, clear selection.
                             selectedDate = null
-                            // Reload this date so the dayBinder is called
-                            // and we can REMOVE the selection background.
                             mainCalendarView.notifyDateChanged(currentSelection)
                         } else {
                             selectedDate = day.date
-                            // Reload the newly selected date so the dayBinder is
-                            // called and we can ADD the selection background.
                             mainCalendarView.notifyDateChanged(day.date)
                             if (currentSelection != null) {
-                                // We need to also reload the previously selected
-                                // date so we can REMOVE the selection background.
                                 mainCalendarView.notifyDateChanged(currentSelection)
                             }
                         }
@@ -103,7 +99,7 @@ class CalendarActivity : AppCompatActivity() {
             }
         }
 
-        class MonthHeaderViewContainer(view: View): ViewContainer(view) {
+        class MonthHeaderViewContainer(view: View) : ViewContainer(view) {
             val binding = ActivityCalendarBinding.bind(view)
         }
 
@@ -130,7 +126,6 @@ class CalendarActivity : AppCompatActivity() {
         }
 
 
-
         // dayBinder
         binding.mainCalendarView.dayBinder = object : MonthDayBinder<DayViewContainer> {
             // Called only when a new container is needed.
@@ -143,14 +138,11 @@ class CalendarActivity : AppCompatActivity() {
                 // 주말, 이번 달 아닌 day 색상 변경
                 if (data.position == DayPosition.MonthDate && data.date.dayOfWeek.value == 6) {
                     container.textView.setTextColor(Color.BLUE)
-                }
-                else if (data.position == DayPosition.MonthDate && data.date.dayOfWeek.value == 7) {
+                } else if (data.position == DayPosition.MonthDate && data.date.dayOfWeek.value == 7) {
                     container.textView.setTextColor(Color.RED)
-                }
-                else if (data.position != DayPosition.MonthDate) {
+                } else if (data.position != DayPosition.MonthDate) {
                     container.textView.setTextColor(Color.GRAY)
-                }
-                else {
+                } else {
                     container.textView.setTextColor(Color.BLACK)
                 }
 
@@ -187,7 +179,6 @@ class CalendarActivity : AppCompatActivity() {
         binding.mainCalendarView.scrollToMonth(currentMonth)
 
 
-
         // titlesContainer (연, 월 표시)
         val titlesContainer = findViewById<ViewGroup>(R.id.yearMonthContainer)
         titlesContainer.children
@@ -198,23 +189,22 @@ class CalendarActivity : AppCompatActivity() {
 
 
         // monthHeaderBinder (일 ~ 월 표시)
-        binding.mainCalendarView.monthHeaderBinder = object : MonthHeaderFooterBinder<MonthViewContainer> {
-            override fun create(view: View) = MonthViewContainer(view)
-            override fun bind(container: MonthViewContainer, data: CalendarMonth) {
-                // Remember that the header is reused so this will be called for each month.
-                // However, the first day of the week will not change so no need to bind
-                // the same view every time it is reused.
-                if (container.titlesContianer.tag == null) {
-                    container.titlesContianer.tag = data.yearMonth
-                    container.titlesContianer.children.map { it as TextView }
-                        .forEachIndexed { index, textView ->
-                            val dayOfWeek = daysOfWeek[index]
-                            val title = dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
-                            textView.text = title
-                        }
+        binding.mainCalendarView.monthHeaderBinder =
+            object : MonthHeaderFooterBinder<MonthViewContainer> {
+                override fun create(view: View) = MonthViewContainer(view)
+                override fun bind(container: MonthViewContainer, data: CalendarMonth) {
+                    if (container.titlesContianer.tag == null) {
+                        container.titlesContianer.tag = data.yearMonth
+                        container.titlesContianer.children.map { it as TextView }
+                            .forEachIndexed { index, textView ->
+                                val dayOfWeek = daysOfWeek[index]
+                                val title =
+                                    dayOfWeek.getDisplayName(TextStyle.SHORT, Locale.getDefault())
+                                textView.text = title
+                            }
+                    }
                 }
             }
-        }
 
         // xml < > 버튼으로 달력 스크롤하기
         binding.btnGoPreviousMonth.setOnClickListener {
@@ -230,7 +220,7 @@ class CalendarActivity : AppCompatActivity() {
         }
 
 
-        // 우하단 + 버튼 누르면 일정 추가 화면으로 넘어가기 (+ 선택한 날짜도 같이 넘어가게?)
+        // 우하단 + 버튼 누르면 일정 추가 화면으로 넘어가기 (+ 선택한 날짜도 같이 넘어가게)
         binding.btnAddSchedule.setOnClickListener {
             val addIntent = Intent(this, AddScheduleActivity::class.java)
 
@@ -252,6 +242,7 @@ class CalendarActivity : AppCompatActivity() {
 
         activityResultLauncher = registerForActivityResult(ActivityResultContracts.StartActivityForResult()) { result ->
             if (result.resultCode == RESULT_OK) {
+                checkEventDate = true
                 eventTitle = result.data?.getStringExtra("eventTitle").toString()
                 switchChecked = result.data?.getStringExtra("switchChecked").toString()
 
@@ -334,6 +325,7 @@ class CalendarActivity : AppCompatActivity() {
                                 // 시작 날짜와 끝 날짜가 다른 경우
                                 if (nonStringStartDate != nonStringEndDate) {
                                     if (day.date == nonStringStartDate) {
+                                        checkEventDate = true
                                         eventNum.text = eventTitle
                                         eventNum.setBackgroundResource(R.drawable.event_on_calendar_corner_pink_start)
                                         eventNum.setTextColor(ContextCompat.getColor(applicationContext, R.color.eventpinktext))
@@ -345,31 +337,37 @@ class CalendarActivity : AppCompatActivity() {
                                     else if (day.date == nonStringEndDate) {
                                         eventNum.setBackgroundResource(R.drawable.event_on_calendar_corner_pink_end)
                                         eventNum.setTextColor(ContextCompat.getColor(applicationContext, R.color.eventpinktext))
+                                        checkEventDate = false
                                     }
                                     nonStringStartDate = null
                                     nonStringEndDate = null
                                 }
                                 // 시작 날짜 == 끝 날짜지만 시간만 다른 경우
                                 else if (startDate == endDate && startDate == "${m} ${d}일 (${dow})") {
+                                    checkEventDate = true
                                     eventNum.text = eventTitle
                                     eventNum.setBackgroundResource(R.drawable.event_on_calendar_corner_pink)
                                     eventNum.setTextColor(ContextCompat.getColor(applicationContext, R.color.eventpinktext))
                                     startDate = ""
                                     endDate = ""
+                                    checkEventDate = false
                                 }
 
                                 // 하루종일 switch ON
                                 if (switchChecked == "true" && allDayEventDate == "${m} ${d}일 (${dow})") {
+                                    checkEventDate = true
                                     eventNum.text = eventTitle
                                     eventNum.setBackgroundResource(R.drawable.event_on_calendar_corner_pink)
                                     eventNum.setTextColor(ContextCompat.getColor(applicationContext, R.color.eventpinktext))
                                     allDayEventDate = ""
+                                    checkEventDate = false
                                 }
                             }
                             else if (selectedColor == "green") {
                                 // 시작 날짜와 끝 날짜가 다른 경우
                                 if (nonStringStartDate != nonStringEndDate) {
                                     if (day.date == nonStringStartDate) {
+                                        checkEventDate = true
                                         eventNum.text = eventTitle
                                         eventNum.setBackgroundResource(R.drawable.event_on_calendar_corner_green_start)
                                         eventNum.setTextColor(ContextCompat.getColor(applicationContext, R.color.eventgreentext))
@@ -381,31 +379,37 @@ class CalendarActivity : AppCompatActivity() {
                                     else if (day.date == nonStringEndDate) {
                                         eventNum.setBackgroundResource(R.drawable.event_on_calendar_corner_green_end)
                                         eventNum.setTextColor(ContextCompat.getColor(applicationContext, R.color.eventgreentext))
+                                        checkEventDate = false
                                     }
                                     nonStringStartDate = null
                                     nonStringEndDate = null
                                 }
                                 // 시작 날짜 == 끝 날짜지만 시간만 다른 경우
                                 else if (startDate == endDate && startDate == "${m} ${d}일 (${dow})") {
+                                    checkEventDate = true
                                     eventNum.text = eventTitle
                                     eventNum.setBackgroundResource(R.drawable.event_on_calendar_corner_green)
                                     eventNum.setTextColor(ContextCompat.getColor(applicationContext, R.color.eventgreentext))
                                     startDate = ""
                                     endDate = ""
+                                    checkEventDate = false
                                 }
 
                                 // 하루종일 switch ON
                                 if (switchChecked == "true" && allDayEventDate == "${m} ${d}일 (${dow})") {
+                                    checkEventDate = true
                                     eventNum.text = eventTitle
                                     eventNum.setBackgroundResource(R.drawable.event_on_calendar_corner_green)
                                     eventNum.setTextColor(ContextCompat.getColor(applicationContext, R.color.eventgreentext))
                                     allDayEventDate = ""
+                                    checkEventDate = false
                                 }
                             }
                             else if (selectedColor == "purple") {
                                 // 시작 날짜와 끝 날짜가 다른 경우
                                 if (nonStringStartDate != nonStringEndDate) {
                                     if (day.date == nonStringStartDate) {
+                                        checkEventDate = true
                                         eventNum.text = eventTitle
                                         eventNum.setBackgroundResource(R.drawable.event_on_calendar_corner_purple_start)
                                         eventNum.setTextColor(ContextCompat.getColor(applicationContext, R.color.eventpurpletext))
@@ -417,25 +421,30 @@ class CalendarActivity : AppCompatActivity() {
                                     else if (day.date == nonStringEndDate) {
                                         eventNum.setBackgroundResource(R.drawable.event_on_calendar_corner_purple_end)
                                         eventNum.setTextColor(ContextCompat.getColor(applicationContext, R.color.eventpurpletext))
+                                        checkEventDate = false
                                     }
                                     nonStringStartDate = null
                                     nonStringEndDate = null
                                 }
                                 // 시작 날짜 == 끝 날짜지만 시간만 다른 경우
                                 else if (startDate == endDate && startDate == "${m} ${d}일 (${dow})") {
+                                    checkEventDate = true
                                     eventNum.text = eventTitle
                                     eventNum.setBackgroundResource(R.drawable.event_on_calendar_corner_purple)
                                     eventNum.setTextColor(ContextCompat.getColor(applicationContext, R.color.eventpurpletext))
                                     startDate = ""
                                     endDate = ""
+                                    checkEventDate = false
                                 }
 
                                 // 하루종일 switch ON
                                 if (switchChecked == "true" && allDayEventDate == "${m} ${d}일 (${dow})") {
+                                    checkEventDate = true
                                     eventNum.text = eventTitle
                                     eventNum.setBackgroundResource(R.drawable.event_on_calendar_corner_purple)
                                     eventNum.setTextColor(ContextCompat.getColor(applicationContext, R.color.eventpurpletext))
                                     allDayEventDate = ""
+                                    checkEventDate = false
                                 }
                             }
                         }
@@ -459,29 +468,32 @@ class CalendarActivity : AppCompatActivity() {
 
                         //dummy data
 //                        if (day.date == today) {
-//                            firstEvent.text = "일정"
+//                            firstEvent.text = "일정 1"
 //                            firstEvent.setBackgroundResource(R.drawable.event_on_calendar_corner_pink_start)
 //                            firstEvent.setTextColor(ContextCompat.getColor(applicationContext, R.color.eventpinktext))
 //
-//                            secondEvent.text = "일정"
+//                            secondEvent.text = "일정 2"
 //                            secondEvent.setBackgroundResource(R.drawable.event_on_calendar_corner_green_start)
 //                            secondEvent.setTextColor(ContextCompat.getColor(applicationContext, R.color.eventgreentext))
 //                        }
 //                        else if (day.date == today.plusDays(1)) {
 //                            firstEvent.setBackgroundResource(R.drawable.event_on_calendar_corner_pink_middle)
-//                            secondEvent.setBackgroundResource(R.drawable.event_on_calendar_corner_green_middle)
+//                            secondEvent.setBackgroundResource(R.drawable.event_on_calendar_corner_green_end)
 //                        }
 //                        else if (day.date == today.plusDays(2)) {
 //                            firstEvent.setBackgroundResource(R.drawable.event_on_calendar_corner_pink_end)
-//                            secondEvent.setBackgroundResource(R.drawable.event_on_calendar_corner_green_end)
 //                        }
-//                        addEventOnPosition()
+
+                        if (checkEventDate) {
+                            addEventOnPosition()
+                        }
+
+
 
 
 
 
                     }
-
 
 
                     }
@@ -490,7 +502,6 @@ class CalendarActivity : AppCompatActivity() {
 
             }
         }
-
 
 
     // 달력 옮길 때 상단 title(연, 월) 업데이트
@@ -509,6 +520,34 @@ class CalendarActivity : AppCompatActivity() {
     fun DayOfWeek.displayText(short: Boolean = true): String {
         val style = if (short) TextStyle.SHORT else TextStyle.FULL
         return getDisplayName(style, Locale.getDefault())
+    }
+
+    override fun onRestart() {
+        super.onRestart()
+    }
+
+    // Navigation Drawer 메뉴를 초기화하는 함수
+    private fun initNavigationMenu() {
+        val drawerLayout: DrawerLayout = binding.drawerLayout
+        val navView: NavigationView = binding.navView
+
+        navView.setNavigationItemSelectedListener(this)
+
+        // 메뉴(설정) 버튼 눌렀을 때 Navigation drawrer 보이기
+        binding.btnMenu.setOnClickListener {
+            drawerLayout.openDrawer(GravityCompat.END) }
+
+        // 네비게이션 헤더 메뉴에 클릭 이벤트 연결
+        val headerView = navView.getHeaderView(0)
+        val back = headerView.findViewById<ImageButton>(R.id.backbtn)
+        back.setOnClickListener { // drawer 닫기
+            drawerLayout.closeDrawer(GravityCompat.END)
+        }
+    }
+
+    // Drawer content 내 메뉴 클릭 이벤트 처리하는 함수
+    override fun onNavigationItemSelected(item: MenuItem): Boolean {
+        TODO("Not yet implemented")
     }
 
 }

@@ -30,4 +30,16 @@
         <item name="android:backgroundDimEnabled">true</item>
     </style>
 
+
+    <color name="todayCircle">#FEB9B9</color>
+    <color name="selectBorder">#C0C0C0</color>
+    <color name="addbgGrey">#878787</color>
+    <color name="eventpink">#FFE4EE</color>
+    <color name="eventpinktext">#F22C2C</color>
+    <color name="eventpurple">#F5E5FF</color>
+    <color name="eventpurpletext">#B708F4</color>
+    <color name="eventgreen">#EEFFF2</color>
+    <color name="eventgreentext">#277E35</color>
+    <color name="textBlue">#0669FD</color>
+
 </resources>

@@ -26,6 +26,16 @@
             android:textStyle="bold"
             android:textColor="@color/black"/>
 
+        <ImageButton
+            android:id="@+id/requestbtn"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="end|center"
+            android:scaleType="centerInside"
+            android:layout_marginEnd="17dp"
+            android:background="@android:color/transparent"
+            android:src="@drawable/add_friend_request"/>
+
     </androidx.appcompat.widget.Toolbar>
 
     <FrameLayout

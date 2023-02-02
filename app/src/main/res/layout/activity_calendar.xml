@@ -115,7 +115,7 @@
                         app:layout_constraintEnd_toEndOf="parent"/>
 
 
-            </androidx.constraintlayout.widget.ConstraintLayout>
+                </androidx.constraintlayout.widget.ConstraintLayout>
 
 
                 <ImageButton
@@ -172,8 +172,13 @@
         android:layout_gravity="end"
         android:fitsSystemWindows="true"
         app:headerLayout="@layout/nav_header_setting"/>
+
         <!--메뉴 추가할 경우 아래 xml에 추가-->
         <!-- app:menu="@menu/activity_main_drawer"-->
+
+    <!--메뉴 추가할 경우 아래 xml에 추가-->
+    <!-- app:menu="@menu/activity_main_drawer"-->
+
 
     <!--날짜 누르면 일정 뜨게 하는 Fragment 위함-->
     <FrameLayout

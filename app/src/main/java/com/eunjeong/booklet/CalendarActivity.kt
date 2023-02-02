@@ -7,11 +7,11 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.GravityCompat
 import androidx.core.view.children
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.navigation.findNavController
 import com.eunjeong.booklet.databinding.ActivityCalendarBinding
 import com.eunjeong.booklet.databinding.CalendarDayLayoutBinding
 import com.google.android.material.navigation.NavigationView
@@ -27,7 +27,7 @@ import java.time.format.TextStyle
 import java.util.*
 
 
-class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener {
+class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener, Communicator {
 
     private lateinit var binding: ActivityCalendarBinding
     private lateinit var tbinding: CalendarDayLayoutBinding
@@ -78,11 +78,25 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
                                 mainCalendarView.notifyDateChanged(currentSelection)
                             }
                         }
-
                     }
+                    // 날짜 클릭하면 dayScheduleFragment 나오도록
+                    supportFragmentManager
+                        .beginTransaction()
+                        .add(binding.frameFragment.id, DayScheduleFragment().apply{
+                            arguments = Bundle().apply{ // Activity에서 날짜 누르면 그 날짜를 fragment로 전달하기
+                                putString("Date", "${day.date}")
+                            }
+                        })
+                        .addToBackStack("daySchedule").commitAllowingStateLoss()
+
+//                    dayofweek.displayText
+
                 }
+                // 요일 다시 찾기
+                //Toast.makeText(this@CalendarActivity, "${ day.date.month.displayText(true)}", Toast.LENGTH_SHORT).show()
             }
         }
+
 
         class MonthHeaderViewContainer(view: View): ViewContainer(view) {
             val binding = ActivityCalendarBinding.bind(view)
@@ -162,6 +176,8 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         }
 
 
+
+
         // 달력 시작 요일 설정, 앱 실행 시 현재에 해당하는 월 보여주기
         val firstDayOfWeek = firstDayOfWeekFromLocale() // Available from the library
         binding.mainCalendarView.setup(startMonth, endMonth, firstDayOfWeek)
@@ -210,16 +226,9 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
             }
         }
 
-<<<<<<< HEAD
-
-        //
-        //
-
-
-=======
         // 네비게이션 메뉴 초기화
         initNavigationMenu()
->>>>>>> 4db45a535ca7b348311873a528a4a679e3078c3f
+
 
     }
 
@@ -260,4 +269,38 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
     override fun onNavigationItemSelected(item: MenuItem): Boolean {
         TODO("Not yet implemented")
     }
+
+    // 달력에서 날짜 누르면 DayScheduleFragment가 나오고,
+    // DayScheduleFragment에서 버튼을 누르면 TimeTableFragment로 가기 위한 함수
+    // interface :  DayScheduleFragment -> timetableFragment
+    override fun GoToTimeTableFragment(clickedDate: String) {
+        val bundle = Bundle()
+        bundle.putString("Date", clickedDate)
+
+        val transaction = this.supportFragmentManager.beginTransaction()
+        val timetablefragment = TimeTableFragment()
+        timetablefragment.arguments = bundle
+
+        transaction.replace(binding.frameFragment.id, timetablefragment)
+        transaction.addToBackStack("timetableFragment")
+        transaction.commit()
+
+    }
+
+    // interface : timetableFragment -> DayScheduleFragment
+    override fun GoToDayScheduleFragment(clickedDate: String) {
+        val bundle = Bundle()
+        bundle.putString("Date", clickedDate)
+
+        val transaction = this.supportFragmentManager.beginTransaction()
+        val dayschedulefragment = DayScheduleFragment()
+        dayschedulefragment.arguments = bundle
+
+        transaction.replace(binding.frameFragment.id, dayschedulefragment)
+        transaction.addToBackStack("dayscheduleFragment").commitAllowingStateLoss()
+        transaction.commit()
+    }
+
+
 }
+

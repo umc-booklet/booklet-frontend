@@ -51,6 +51,9 @@ android {
 }
 
 dependencies {
+    // TimeLineView
+    implementation 'io.github.akri16:timelineview:1.0.0'
+
     // material-calendar
     implementation 'com.github.prolificinteractive:material-calendarview:1.4.3'
     implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.5.1'

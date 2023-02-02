@@ -174,4 +174,20 @@
         app:headerLayout="@layout/nav_header_setting"/>
         <!--메뉴 추가할 경우 아래 xml에 추가-->
         <!-- app:menu="@menu/activity_main_drawer"-->
+
+    <!--날짜 누르면 일정 뜨게 하는 Fragment 위함-->
+    <FrameLayout
+        android:id="@+id/frameFragment"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintVertical_bias="1.0">
+
+
+    </FrameLayout>
+
 </androidx.drawerlayout.widget.DrawerLayout>

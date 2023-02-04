@@ -155,6 +155,11 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
                 textView.text = day.date.dayOfMonth.toString()
                 val dayView = container.view // 달력 한 칸 view
 
+                val firstEvent = container.event1
+                val secondEvent = container.event2
+                val thirdEvent = container.event3
+                val fourthEvent = container.event4
+
                 if (day.position == DayPosition.MonthDate) {
                     textView.visibility = View.VISIBLE
                     if (day.date == today) { // 오늘 날짜 고정으로 원 배경 표시
@@ -168,6 +173,45 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
                         dayView.background = null
                     }
                 }
+
+                //dummy data
+//                if (day.date == today.minusDays(21)) {
+//                    firstEvent.text = "부산"
+//                    firstEvent.setBackgroundResource(R.drawable.event_on_calendar_corner_pink_start)
+//                    firstEvent.setTextColor(ContextCompat.getColor(applicationContext, R.color.eventpinktext))
+//
+//                    secondEvent.text = "알바 휴무"
+//                    secondEvent.setBackgroundResource(R.drawable.event_on_calendar_corner_green_start)
+//                    secondEvent.setTextColor(ContextCompat.getColor(applicationContext, R.color.eventgreentext))
+//                }
+//                else if (day.date == today.minusDays(20)) {
+//                    firstEvent.setBackgroundResource(R.drawable.event_on_calendar_corner_pink_middle)
+//                    secondEvent.setBackgroundResource(R.drawable.event_on_calendar_corner_green_middle)
+//                }
+//                else if (day.date == today.minusDays(19)) {
+//                    firstEvent.setBackgroundResource(R.drawable.event_on_calendar_corner_pink_end)
+//                    secondEvent.setBackgroundResource(R.drawable.event_on_calendar_corner_green_middle)
+//                }
+//                else if (day.date == today.minusDays(18)) {
+//                    secondEvent.setBackgroundResource(R.drawable.event_on_calendar_corner_green_middle)
+//                }
+//                else if (day.date == today.minusDays(17)) {
+//                    secondEvent.setBackgroundResource(R.drawable.event_on_calendar_corner_green_end)
+//                }
+//                else if (day.date == today.minusDays(13)) {
+//                    firstEvent.text = "잠실"
+//                    firstEvent.setBackgroundResource(R.drawable.event_on_calendar_corner_purple)
+//                    firstEvent.setTextColor(ContextCompat.getColor(applicationContext, R.color.eventpurpletext))
+//                }
+//                else if (day.date == today.minusDays(5)) {
+//                    firstEvent.text = "졸논 신청"
+//                    firstEvent.setBackgroundResource(R.drawable.event_on_calendar_corner_purple_start)
+//                    firstEvent.setTextColor(ContextCompat.getColor(applicationContext, R.color.eventpurpletext))
+//                }
+//                else if (day.date == today.minusDays(4)) {
+//                    firstEvent.setBackgroundResource(R.drawable.event_on_calendar_corner_purple_end)
+//                    firstEvent.setTextColor(ContextCompat.getColor(applicationContext, R.color.eventpurpletext))
+//                }
 
 
             }
@@ -219,6 +263,20 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
             binding.mainCalendarView.findFirstVisibleMonth()?.let {
                 binding.mainCalendarView.smoothScrollToMonth(it.yearMonth.nextMonth)
             }
+        }
+
+        binding.btnFriendlist.setOnClickListener {
+            val intent = Intent(this, FriendListActivity::class.java)
+            startActivity(intent)
+        }
+
+        binding.btnAddFriend.setOnClickListener {
+            val intent = Intent(this, GroupChoiceActivity::class.java)
+            startActivity(intent)
+        }
+
+        binding.btnMenu.setOnClickListener {
+            binding.drawerLayout.openDrawer((GravityCompat.END))
         }
 
 
@@ -542,23 +600,6 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
                         }
 
-                        //dummy data
-                        if (day.date == today) {
-                            firstEvent.text = "일정 1"
-                            firstEvent.setBackgroundResource(R.drawable.event_on_calendar_corner_pink_start)
-                            firstEvent.setTextColor(ContextCompat.getColor(applicationContext, R.color.eventpinktext))
-
-                            secondEvent.text = "일정 2"
-                            secondEvent.setBackgroundResource(R.drawable.event_on_calendar_corner_green_start)
-                            secondEvent.setTextColor(ContextCompat.getColor(applicationContext, R.color.eventgreentext))
-                        }
-                        else if (day.date == today.plusDays(1)) {
-                            firstEvent.setBackgroundResource(R.drawable.event_on_calendar_corner_pink_middle)
-                            secondEvent.setBackgroundResource(R.drawable.event_on_calendar_corner_green_end)
-                        }
-                        else if (day.date == today.plusDays(2)) {
-                            firstEvent.setBackgroundResource(R.drawable.event_on_calendar_corner_pink_end)
-                        }
 
                         if (checkEventDate) {
                             addEventOnPosition()
@@ -598,9 +639,6 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         return getDisplayName(style, Locale.getDefault())
     }
 
-    override fun onRestart() {
-        super.onRestart()
-    }
 
     // Navigation Drawer 메뉴를 초기화하는 함수
     private fun initNavigationMenu() {

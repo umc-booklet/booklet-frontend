@@ -1,6 +1,7 @@
 package com.eunjeong.booklet
 
 import android.content.ContentValues.TAG
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.CalendarContract.Attendees.query
@@ -70,6 +71,12 @@ class FriendListActivity : AppCompatActivity() {
                 return false
             }
         })
+
+        // 이미지 버튼 - 친구 추가 액티비티 연결
+        viewBinding.addfriend.setOnClickListener {
+            val intent = Intent(this, FriendAddActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun filter(text: String) {

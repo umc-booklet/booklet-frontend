@@ -13,6 +13,24 @@
     <color name="grey">#808080</color>
     <color name="satBlue">#000FFF</color>
     <color name="sunRed">#FF0000</color>
+    <color name="lepurple">#B708F4</color>
+    <color name="legreen">#277E35</color>
+    <color name="lered">#F22C2C</color>
+    <color name="bgPurple">#F5E5FF</color>
+    <color name="bgGreen">#DDFFE4</color>
+    <color name="bgRed">#FFE4EE</color>
+
+    <style name="Theme.Transparent" parent="android:Theme">
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <item name="android:colorBackgroundCacheHint">@null</item>
+        <item name="android:windowIsTranslucent">true</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation</item>
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:backgroundDimEnabled">true</item>
+    </style>
+
+
     <color name="todayCircle">#FEB9B9</color>
     <color name="selectBorder">#C0C0C0</color>
     <color name="addbgGrey">#878787</color>
@@ -23,4 +41,5 @@
     <color name="eventgreen">#EEFFF2</color>
     <color name="eventgreentext">#277E35</color>
     <color name="textBlue">#0669FD</color>
+
 </resources>

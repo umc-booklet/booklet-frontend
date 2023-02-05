@@ -1,0 +1,16 @@
+package com.eunjeong.booklet.memberInfo
+
+data class MemberInfoResponse(
+    val isSuccess: Boolean,
+    val code: Int,
+    val message: String,
+    val result: Info
+)
+
+data class Info(
+    val id: Long,
+    val name: String,
+    val phoneNumber: String,
+    val status: String,
+    val profileImage: String
+)

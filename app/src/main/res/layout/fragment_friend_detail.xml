@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
-    <data>
-        <variable
-            name="person"
-            type="com.eunjeong.booklet.datas.Friend" />
-    </data>
+<!--<layout>-->
+<!--    <data>-->
+<!--        <variable-->
+<!--            name="person"-->
+<!--            type="com.eunjeong.booklet.memberInfo.Info" />-->
+<!--    </data>-->
 
     <androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
@@ -19,7 +19,7 @@
             android:layout_height="100dp"
             android:layout_marginTop="-170dp"
             android:elevation="10dp"
-            android:src="@drawable/dog"
+            android:src="@drawable/user"
             app:layout_constraintBottom_toTopOf="@+id/info"
             app:layout_constraintEnd_toEndOf="@+id/info"
             app:layout_constraintStart_toStartOf="@+id/info"
@@ -51,8 +51,7 @@
                     android:layout_height="wrap_content"
                     android:layout_marginTop="70dp"
                     android:layout_marginBottom="12dp"
-                    android:text="@{person.name}"
-                    tools:text="이름"
+                    android:text="사용자 이름 없음"
                     android:textColor="@color/black"
                     android:textSize="14sp"
                     app:layout_constraintBottom_toTopOf="@id/fd_info_code"
@@ -65,8 +64,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_marginBottom="120dp"
-                    android:text="@{person.id}"
-                    tools:text="ABCDEFGH"
+                    android:text="사용자 코드 없음"
                     android:textColor="@color/black"
                     android:textSize="16sp"
                     android:textStyle="bold"
@@ -93,4 +91,4 @@
             </androidx.constraintlayout.widget.ConstraintLayout>
         </androidx.cardview.widget.CardView>
     </androidx.constraintlayout.widget.ConstraintLayout>
-</layout>
+<!--</layout>-->

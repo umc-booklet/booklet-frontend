@@ -8,27 +8,31 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import com.eunjeong.booklet.databinding.FragmentFriendDetailBinding
-import com.eunjeong.booklet.datas.Friend
+import com.eunjeong.booklet.memberInfo.Info
 import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 
-class FriendDetailFragment(val item: Friend): BottomSheetDialogFragment() {
-    private lateinit var bottomsheetBinding: FragmentFriendDetailBinding
+class FriendDetailFragment(val item: Info): BottomSheetDialogFragment() {
+    private lateinit var bottomSheetBinding: FragmentFriendDetailBinding
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        bottomsheetBinding = FragmentFriendDetailBinding.inflate(layoutInflater)
-        return bottomsheetBinding.root
+        bottomSheetBinding = FragmentFriendDetailBinding.inflate(layoutInflater)
+        return bottomSheetBinding.root
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        bottomsheetBinding.apply {
-            person = item
+        bottomSheetBinding.apply {
+            bottomSheetBinding.fdInfoName.text = item.name
+            bottomSheetBinding.fdInfoCode.text = item.id.toString()
+
+            //bottomSheetBinding.fdImg.setImageResource(item.profileImage)
+            //person = item
             fdInfoAddbtn.setOnClickListener {
                 dismiss()
             }

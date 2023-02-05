@@ -8,16 +8,33 @@ import android.view.ViewGroup
 import android.widget.Filter
 import android.widget.Filterable
 import androidx.recyclerview.widget.RecyclerView
+import com.eunjeong.booklet.R
+import com.eunjeong.booklet.memberInfo.Info
 import com.eunjeong.booklet.databinding.FriendAddListItemBinding
-import com.eunjeong.booklet.datas.Friend
+import com.eunjeong.booklet.friendAdd.FriendAddService
+import com.eunjeong.booklet.login.LoginService
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 
-class FriendAddListRVAdapter(private var friendlist: ArrayList<Friend>): RecyclerView.Adapter<FriendAddListRVAdapter.DataViewHoler>(),
+class FriendAddListRVAdapter(private var friendlist: ArrayList<Info>): RecyclerView.Adapter<FriendAddListRVAdapter.DataViewHoler>(),
     Filterable {
 
+
+//    // retrofit 객체
+//    val retrofit = Retrofit.Builder()
+//        .baseUrl("http://3.35.217.34:8080")
+//        .addConverterFactory(GsonConverterFactory.create())
+//        .build()
+//
+//    // retrofit 객체에 Interface 연결
+//    val friendRequest = retrofit.create(FriendAddService::class.java)
+
     //---------------------------------------------
-    //-- viewholder & clicklistener
+    //-- ViewHolder & ClickListener
     interface OnItemClickListener {
-        fun onItemClick(v: View, friend: Friend, pos: Int)
+        fun onItemClick(v: View, friend: Info, pos: Int)
     }
 
     private lateinit var listener: OnItemClickListener
@@ -25,12 +42,13 @@ class FriendAddListRVAdapter(private var friendlist: ArrayList<Friend>): Recycle
         listener = itemClickListener
     }
 
-    // ViewHodler 객체
+    // ViewHolder 객체
     inner class DataViewHoler(private val viewBinding: FriendAddListItemBinding) :
         RecyclerView.ViewHolder(viewBinding.root) {
-        //만든 데이터 클래스를 인자로 받음.
-        fun bind(item: Friend) {
-            viewBinding.person = item
+
+        fun bind(item: Info) {
+            viewBinding.frName.text = item.name // 이름
+
             viewBinding.root.setOnClickListener {
                 val pos = adapterPosition
                 if (pos != RecyclerView.NO_POSITION) {
@@ -39,28 +57,37 @@ class FriendAddListRVAdapter(private var friendlist: ArrayList<Friend>): Recycle
                     }
                 }
             }
+
+            viewBinding.frAddBtn.setOnClickListener {
+                // 친구 추가
+                //friendRequest.friendRequest()
+            }
         }
     }
 
-    // ViewHolder 만들어질 때 실행할 동작
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DataViewHoler {
-        val fourBinding =
-            FriendAddListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return DataViewHoler(fourBinding)
+        val binding = FriendAddListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
+        return DataViewHoler(binding)
     }
 
-    // ViewHolder가 실제로 데이터를 표시해야 할 때 호출되는 함수
     override fun onBindViewHolder(holder: DataViewHoler, position: Int) {
         holder.bind(friendlist[position])
     }
 
-    // 표현할 Item의 총 개수
     override fun getItemCount(): Int = friendlist.size
+
+
+
+
+
+
+
+
 
     //-------------------------
     //-- filter
     var TAG = "FriendAddListRVAdapter"
-    var filteredPersons = ArrayList<Friend>()
+    var filteredPersons = ArrayList<Info>()
     var itemFilter = ItemFilter()
     init {
         filteredPersons.addAll(friendlist)
@@ -72,7 +99,7 @@ class FriendAddListRVAdapter(private var friendlist: ArrayList<Friend>): Recycle
             Log.d(TAG, "charSequence : $constraint")
 
             //검색이 필요없을 경우를 위해 원본 배열을 복제
-            val filteredList: ArrayList<Friend> = ArrayList<Friend>()
+            val filteredList: ArrayList<Info> = ArrayList<Info>()
             //공백제외 아무런 값이 없을 경우 -> 원본 배열
             if (filterString.trim { it <= ' ' }.isEmpty()) {
                 results.values = friendlist
@@ -82,7 +109,7 @@ class FriendAddListRVAdapter(private var friendlist: ArrayList<Friend>): Recycle
 
             } else {
                 for (person in friendlist) {
-                    if (person.id.contains(filterString)) {
+                    if (person.id.toString().contains(filterString)) {
                         filteredList.add(person)
                     }
                 }
@@ -96,7 +123,7 @@ class FriendAddListRVAdapter(private var friendlist: ArrayList<Friend>): Recycle
         override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
             filteredPersons.clear()
             if (results != null) {
-                filteredPersons.addAll(results.values as ArrayList<Friend>)
+                filteredPersons.addAll(results.values as ArrayList<Info>)
             }
             notifyDataSetChanged()
         }
@@ -105,7 +132,7 @@ class FriendAddListRVAdapter(private var friendlist: ArrayList<Friend>): Recycle
         return itemFilter
     }
 
-    fun filterList(filterList: ArrayList<Friend>){
+    fun filterList(filterList: ArrayList<Info>){
         friendlist = filterList
         notifyDataSetChanged()
     }

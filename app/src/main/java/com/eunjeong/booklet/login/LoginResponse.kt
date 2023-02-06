@@ -1,17 +1,12 @@
 package com.eunjeong.booklet.login
 
+import com.eunjeong.booklet.memberInfo.Info
+
 // 로그인 Response
 data class LoginResponse(
     val isSuccess: Boolean,
     val code: Int,
     val message: String,
-    val result: List<ResultResponse>
+    val result: List<Info>
 )
 
-data class ResultResponse(
-    val id: Long,
-    val userId: String,
-    val name: String,
-    val status: String,
-    val profileImage: String
-)

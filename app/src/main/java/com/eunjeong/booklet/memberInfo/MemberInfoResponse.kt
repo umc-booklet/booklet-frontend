@@ -9,8 +9,8 @@ data class MemberInfoResponse(
 
 data class Info(
     val id: Long,
+    val userId: String,
     val name: String,
-    val phoneNumber: String,
     val status: String,
     val profileImage: String
 )

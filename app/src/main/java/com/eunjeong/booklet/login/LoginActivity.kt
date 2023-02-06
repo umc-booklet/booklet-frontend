@@ -1,12 +1,21 @@
 package com.eunjeong.booklet.login
 
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
+import android.view.View
+import android.view.WindowManager
+import android.widget.TextView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.eunjeong.booklet.*
 import com.eunjeong.booklet.databinding.ActivityLoginBinding
+import com.eunjeong.booklet.databinding.DialogLoginAlarmBinding
+import kotlinx.android.synthetic.main.dialog_login_alarm.*
+import kotlinx.android.synthetic.main.dialog_login_alarm.view.*
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -34,7 +43,7 @@ class LoginActivity : AppCompatActivity() {
 //            finish()
 //        }
 
-        val name =  viewBinding.idt.text.toString()
+        val id =  viewBinding.idt.text.toString()
         val password = viewBinding.pwdt.text.toString()
 
         // client 객체
@@ -55,20 +64,20 @@ class LoginActivity : AppCompatActivity() {
 
         // 로그인 버튼 누르면
         viewBinding.signinbtn.setOnClickListener {
-            loginService.requestLogin(LoginRequest(name, password)).enqueue(object: Callback<LoginResponse>{
+            loginService.requestLogin(LoginRequest(id, password)).enqueue(object: Callback<LoginResponse>{
                 override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                     if (response.isSuccessful){
                         val responseData = response.body()
-                        val dialog = AlertDialog.Builder(this@LoginActivity)
                         if (responseData != null) {
-                            Log.d("Retrofit","Response\nCode: ${responseData.code} Message: ${responseData.message}")
-                            dialog.setTitle("결과")
-                            dialog.setMessage("code = " + responseData.code + ", msg = " + responseData.message)
-                            dialog.show()
+                            Log.d("Retrofit","Response\nCode: ${responseData.code} Message: ${responseData.message}") // 기록 남기기
 
-                            if (responseData.code == 1000) {
+                            if (responseData.code == 1000) { // 제대로 로그인 했을 때
                                 val intent = Intent(this@LoginActivity, CalendarActivity::class.java)
                                 startActivity(intent)
+                            }
+
+                            if (responseData.code != 1000) { // 제대로 로그인 안했을 때
+                                cuDialog(viewBinding.root, responseData.message)
                             }
 
                             // 로그인 성공(code = 1000) & 자동 로그인 check, 둘 다 만족하면 정보 저장
@@ -98,6 +107,22 @@ class LoginActivity : AppCompatActivity() {
             val intent = Intent(this, SignUpActivity::class.java)
             startActivity(intent)
         }
+    }
+
+    // 로그인 알람 Dialog
+    fun cuDialog(view: View, s: String) {
+        val binding: DialogLoginAlarmBinding = DialogLoginAlarmBinding.inflate(layoutInflater)
+        val build = AlertDialog.Builder(view.context).apply {
+            setView(binding.root) }
+
+        val dialog = build.create()
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT)); // 배경 투명
+        binding.message.text = s
+        dialog.setCancelable(true)
+        dialog.show()
+
+        binding.ookBtn.setOnClickListener { // Ok 버튼 클릭하면 지우기
+            dialog.dismiss() }
     }
 
 //    fun saveData(loginData: LoginRequest){

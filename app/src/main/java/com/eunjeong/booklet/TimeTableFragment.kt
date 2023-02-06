@@ -1,31 +1,13 @@
 package com.eunjeong.booklet
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.graphics.toColor
-import androidx.core.graphics.toColorInt
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.akribase.timelineview.Event
-import com.akribase.timelineview.TimelineView
-import com.eunjeong.booklet.adapters.DayScheduleRVAdapter
-import com.eunjeong.booklet.databinding.ActivityCalendarBinding.inflate
 import com.eunjeong.booklet.databinding.FragmentTimeTableBinding
-import com.github.tlaabs.timetableview.Schedule
-import com.github.tlaabs.timetableview.Time
-import com.islandparadise14.mintable.model.ScheduleDay
-import com.islandparadise14.mintable.model.ScheduleEntity
-import com.islandparadise14.mintable.tableinterface.OnScheduleClickListener
-import com.islandparadise14.mintable.tableinterface.OnScheduleLongClickListener
-import kotlinx.android.synthetic.main.fragment_time_table.*
-import kotlinx.android.synthetic.main.nav_header_setting.*
-import java.lang.reflect.Array.get
+
 
 class TimeTableFragment : Fragment() {
     private lateinit var viewBinding: FragmentTimeTableBinding

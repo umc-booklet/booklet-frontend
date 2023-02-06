@@ -5,13 +5,13 @@ data class LoginResponse(
     val isSuccess: Boolean,
     val code: Int,
     val message: String,
-    val results: List<ResultResponse>
+    val result: List<ResultResponse>
 )
 
 data class ResultResponse(
     val id: Long,
+    val userId: String,
     val name: String,
-    val phoneNumber: String,
     val status: String,
     val profileImage: String
 )

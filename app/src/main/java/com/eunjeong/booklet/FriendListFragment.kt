@@ -23,10 +23,12 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
 
-class FriendListFragment : Fragment() {
+// LoginActivity (userId) = String i
+// Int i
+class FriendListFragment(i: String) : Fragment() {
     private lateinit var viewBinding: FragmentFriendListBinding
     private val friendlist: ArrayList<Info> = arrayListOf()
-    //private val mAdapter = FriendAddListRVAdapter(friendlist)
+    private val i = i.toInt()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -34,6 +36,7 @@ class FriendListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         viewBinding = FragmentFriendListBinding.inflate(layoutInflater)
+
 
         // Item 구분선
         val decoration = DividerItemDecoration(activity, VERTICAL)
@@ -56,7 +59,7 @@ class FriendListFragment : Fragment() {
         val friendListCheckService = retrofit.create(FriendListCheckService::class.java)
         val memberInfoService = retrofit.create(MemberInfoService::class.java)
 
-        friendListCheckService.checkFriendList(1).enqueue(object: Callback<FriendListCheckResponse>{
+        friendListCheckService.checkFriendList(i).enqueue(object: Callback<FriendListCheckResponse>{
             override fun onResponse(call: Call<FriendListCheckResponse>, response: Response<FriendListCheckResponse>) {
                 if (response.isSuccessful){
                     val responseData = response.body()

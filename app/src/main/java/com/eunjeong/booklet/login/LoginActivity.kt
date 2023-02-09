@@ -6,9 +6,6 @@ import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
 import android.util.Log
 import android.view.View
-import android.view.WindowManager
-import android.widget.TextView
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.eunjeong.booklet.*
@@ -72,7 +69,12 @@ class LoginActivity : AppCompatActivity() {
                             Log.d("Retrofit","Response\nCode: ${responseData.code} Message: ${responseData.message}") // 기록 남기기
 
                             if (responseData.code == 1000) { // 제대로 로그인 했을 때
+                                responseData.result[1]
                                 val intent = Intent(this@LoginActivity, CalendarActivity::class.java)
+                                // **
+                                val intent2 = Intent(this@LoginActivity, FriendAddActivity::class.java)
+                                intent2.putExtra("userId", responseData.result.elementAt(1).toString())
+                                // **
                                 startActivity(intent)
                             }
 

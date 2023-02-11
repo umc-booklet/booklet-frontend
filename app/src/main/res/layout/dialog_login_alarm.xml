@@ -6,7 +6,7 @@
     android:layout_height="match_parent">
 
     <androidx.cardview.widget.CardView
-        android:layout_width="240dp"
+        android:layout_width="300dp"
         android:layout_height="wrap_content"
         android:padding="10dp"
         app:cardCornerRadius="14dp"
@@ -63,8 +63,6 @@
 
             </LinearLayout>
         </LinearLayout>
-
-
     </androidx.cardview.widget.CardView>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

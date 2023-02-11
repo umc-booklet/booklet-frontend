@@ -25,10 +25,10 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 // LoginActivity (userId) = String i
 // Int i
-class FriendListFragment(i: String) : Fragment() {
+class FriendListFragment() : Fragment() {
     private lateinit var viewBinding: FragmentFriendListBinding
-    private val friendlist: ArrayList<Info> = arrayListOf()
-    private val i = i.toInt()
+    private val friendList: ArrayList<Info> = arrayListOf()
+//    private val i = i.toInt()
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -59,7 +59,8 @@ class FriendListFragment(i: String) : Fragment() {
         val friendListCheckService = retrofit.create(FriendListCheckService::class.java)
         val memberInfoService = retrofit.create(MemberInfoService::class.java)
 
-        friendListCheckService.checkFriendList(i).enqueue(object: Callback<FriendListCheckResponse>{
+        // {userId} 로 친구 목록 조회
+        friendListCheckService.checkFriendList(1).enqueue(object: Callback<FriendListCheckResponse>{
             override fun onResponse(call: Call<FriendListCheckResponse>, response: Response<FriendListCheckResponse>) {
                 if (response.isSuccessful){
                     val responseData = response.body()
@@ -73,10 +74,10 @@ class FriendListFragment(i: String) : Fragment() {
                                         val responseData2 = response.body()
                                         if (responseData2 != null) {
                                             Log.d("Retrofit", "Response\nCode: ${responseData2.code} Message: ${responseData2.message}")
-                                            friendlist.add(responseData2.result)
-                                            Log.d("array1", friendlist.toString())
-                                            setAdapter(friendlist)
-                                            Log.d("array2", friendlist.toString())
+                                            friendList.add(responseData2.result)
+                                            Log.d("array1", friendList.toString())
+                                            setAdapter(friendList)
+                                            Log.d("array2", friendList.toString())
                                         }
                                     } else {
                                         Log.w("Retrofit", "Response Not Successful ${response.code()}")
@@ -105,7 +106,7 @@ class FriendListFragment(i: String) : Fragment() {
 
     private fun setAdapter(list : ArrayList<Info>){
         val mAdapter = FriendAddListRVAdapter(list)
-        Log.d("array3", friendlist.toString())
+        Log.d("array3", friendList.toString())
         Log.d("item", mAdapter.itemCount.toString())
         viewBinding.rvData.adapter = mAdapter
         viewBinding.rvData.layoutManager = LinearLayoutManager(activity)
@@ -141,7 +142,7 @@ class FriendListFragment(i: String) : Fragment() {
     // Search View 필터 함수
     private fun filter(text: String, adapter : FriendAddListRVAdapter) {
         val filteredlist: ArrayList<Info> = ArrayList()
-        for (item in friendlist) {
+        for (item in friendList) {
             if (item.name.contains(text.toLowerCase())) {
                 filteredlist.add(item)
             } else if (item in filteredlist) {

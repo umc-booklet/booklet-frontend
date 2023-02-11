@@ -1,12 +1,9 @@
 package com.eunjeong.booklet.login
 
-import com.eunjeong.booklet.login.LoginRequest
-import com.eunjeong.booklet.login.LoginResponse
 import retrofit2.Call
 import retrofit2.http.*
 
 interface LoginService {
-
     @Headers("Content-Type:application/json") // response 415 error
     @POST("api/v1/login") // POST 통신
     fun requestLogin( // Input 정의

@@ -23,15 +23,12 @@ class FriendAddActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(false) //기본 앱 제목 보이지 않게 하기
         actionBar?.setDisplayHomeAsUpEnabled(true) // 앱바에 뒤로가기 버튼 만들기
 
-        // 내 ID 받아오기
-        val friendAddIntent = intent
-        val user = friendAddIntent.getStringExtra("userId")
-        Log.d("value", user.toString()) // 값 확인 필요.
+//        // 내 ID 받아오기
+//        val friendAddIntent = intent
+//        val user = friendAddIntent.getStringExtra("userId")
+//        Log.d("value", user.toString()) // 값 확인 필요.
 
         // 각 Fragment에 인자로 넘겨주기
-
-
-
         // 내 프로필 Fragment
         supportFragmentManager
             .beginTransaction()
@@ -41,7 +38,7 @@ class FriendAddActivity : AppCompatActivity() {
         // 친구 추가 속에 친구 목록 Fragment
         supportFragmentManager
             .beginTransaction()
-            .replace(viewBinding.friendcontainer.id, FriendListFragment(user.toString()))
+            .replace(viewBinding.friendcontainer.id, FriendListFragment())
             .commitAllowingStateLoss()
 
         // 친구 요청 버튼 클릭시 액티비티 교체
@@ -54,7 +51,7 @@ class FriendAddActivity : AppCompatActivity() {
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         return when (item.getItemId()) {
             R.id.home -> {
-                finish() //툴바 뒤로가기버튼 눌렸을 때 동작
+                finish() //툴바 뒤로 가기 버튼 눌렸을 때 동작
                 true
             }
             else -> super.onOptionsItemSelected(item)

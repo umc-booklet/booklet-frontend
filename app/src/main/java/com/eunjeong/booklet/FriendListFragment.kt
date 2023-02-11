@@ -8,6 +8,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.DividerItemDecoration.VERTICAL
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -22,13 +23,14 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class FriendListFragment : Fragment() {
     private lateinit var viewBinding: FragmentFriendListBinding
-    private var searchList = ArrayList<Info>()
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         viewBinding = FragmentFriendListBinding.inflate(layoutInflater)
+        viewBinding.emptyView.isVisible = true
 
         // Item 구분선
         val decoration = DividerItemDecoration(activity, VERTICAL)
@@ -61,8 +63,15 @@ class FriendListFragment : Fragment() {
                             val responseData = response.body()
                             if (responseData != null){
                                 for (i in responseData ) {
+                                    var searchList = ArrayList<Info>() // 새로 초기화
                                     searchList.add(i)
-                                    setAdapter(searchList)
+
+                                    if (searchList.size == 0) {
+                                        viewBinding.emptyView.isVisible = true
+                                    } else {
+                                        viewBinding.emptyView.isVisible = false
+                                        setAdapter(searchList)
+                                    }
                                 }
                             }
                         } else {
@@ -87,7 +96,6 @@ class FriendListFragment : Fragment() {
 
     private fun setAdapter(list : ArrayList<Info>){
         val mAdapter = FriendAddListRVAdapter(list)
-        Log.d("ItemCount", list.count().toString())
         viewBinding.rvData.adapter = mAdapter
         viewBinding.rvData.layoutManager = LinearLayoutManager(activity)
 
@@ -101,21 +109,4 @@ class FriendListFragment : Fragment() {
 
 
     }
-
-
-//    // 친구 추가 알람 Dialog
-//    fun cuDialog(view: View, s: String) {
-//        val binding: DialogLoginAlarmBinding = DialogLoginAlarmBinding.inflate(layoutInflater)
-//        val build = AlertDialog.Builder(view.context).apply {
-//            setView(binding.root) }
-//
-//        val dialog = build.create()
-//        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT)); // 배경 투명
-//        binding.message.text = s
-//        dialog.setCancelable(true)
-//        dialog.show()
-//
-//        binding.ookBtn.setOnClickListener { // Ok 버튼 클릭하면 지우기
-//            dialog.dismiss() }
-//    }
 }

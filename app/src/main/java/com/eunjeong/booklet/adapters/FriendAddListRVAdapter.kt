@@ -1,12 +1,17 @@
 package com.eunjeong.booklet.adapters
 
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.eunjeong.booklet.FriendAddActivity
+import com.eunjeong.booklet.databinding.ActivityFriendAddBinding
+import com.eunjeong.booklet.databinding.DialogRecomfirmAcceptBinding
 import com.eunjeong.booklet.memberInfo.Info
 import com.eunjeong.booklet.databinding.FriendAddListItemBinding
 import com.eunjeong.booklet.friendAdd.FriendAddResponse
@@ -45,7 +50,10 @@ class FriendAddListRVAdapter(private var friendList: ArrayList<Info>): RecyclerV
             }
 
             viewBinding.frAddBtn.setOnClickListener {
-                addFriend()
+                //var userId = // 로그인 후 나의 ID 획득
+                var friendId = item.userId.toInt() // 검색 결과로 나온 친구 ID
+                var friendName = item.name // 검색 결과로 나온 친구 이름
+                cuDialog(viewBinding.root, friendName)
             }
         }
     }
@@ -61,8 +69,30 @@ class FriendAddListRVAdapter(private var friendList: ArrayList<Info>): RecyclerV
 
     override fun getItemCount(): Int = friendList.size
 
-     // 친구 추가 기능
-    fun addFriend() {
+     // 친구 추가 기능 userId: Int, friendId: Int
+
+
+    // 친구 추가 재확인 알람 Dialog
+    fun cuDialog(view: View, s: String) {
+        val binding: DialogRecomfirmAcceptBinding = DialogRecomfirmAcceptBinding.inflate(LayoutInflater.from(view.context))
+        val build = AlertDialog.Builder(view.context).apply {
+            setView(binding.root) }
+
+        val dialog = build.create()
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT)); // 배경 투명
+        binding.message.text = s + "님에게\n친구 요청을 보낼까요?"
+        dialog.setCancelable(true)
+        dialog.show()
+
+        binding.okBtn.setOnClickListener {
+            addFriend()
+            dialog.dismiss() }
+
+        binding.noBtn.setOnClickListener {
+            dialog.dismiss()
+        }
+    }
+    private fun addFriend() {
 
         lateinit var a : FriendAddActivity
 
@@ -74,6 +104,7 @@ class FriendAddListRVAdapter(private var friendList: ArrayList<Info>): RecyclerV
 
         val friendAddService = retrofit.create(FriendAddService::class.java)
 
+        // 로그인 해결시 변경
         friendAddService.friendRequest(2, 3).enqueue(object : Callback<FriendAddResponse>{
             override fun onResponse(call: Call<FriendAddResponse>, response: Response<FriendAddResponse>) {
                 if (response.isSuccessful){
@@ -88,7 +119,7 @@ class FriendAddListRVAdapter(private var friendList: ArrayList<Info>): RecyclerV
 
             override fun onFailure(call: Call<FriendAddResponse>, t: Throwable) {
                 Log.e("Retrofit", "Error!", t)
-                Toast.makeText(a.applicationContext, "서버와 통신에 실패했습니다.", Toast.LENGTH_SHORT)
+                Toast.makeText(a.applicationContext, "서버 통신 오류", Toast.LENGTH_SHORT)
             }
         })
     }

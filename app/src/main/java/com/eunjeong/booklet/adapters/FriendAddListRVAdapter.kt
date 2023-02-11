@@ -1,38 +1,24 @@
 package com.eunjeong.booklet.adapters
 
-import android.annotation.SuppressLint
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Filter
-import android.widget.Filterable
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
-import com.eunjeong.booklet.R
+import com.eunjeong.booklet.FriendAddActivity
 import com.eunjeong.booklet.memberInfo.Info
 import com.eunjeong.booklet.databinding.FriendAddListItemBinding
+import com.eunjeong.booklet.friendAdd.FriendAddResponse
 import com.eunjeong.booklet.friendAdd.FriendAddService
-import com.eunjeong.booklet.login.LoginService
-import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class FriendAddListRVAdapter(private var friendlist: ArrayList<Info>): RecyclerView.Adapter<FriendAddListRVAdapter.DataViewHoler>(),
-    Filterable {
+class FriendAddListRVAdapter(private var friendList: ArrayList<Info>): RecyclerView.Adapter<FriendAddListRVAdapter.DataViewHolder>() {
 
-
-//    // retrofit 객체
-//    val retrofit = Retrofit.Builder()
-//        .baseUrl("http://3.35.217.34:8080")
-//        .addConverterFactory(GsonConverterFactory.create())
-//        .build()
-//
-//    // retrofit 객체에 Interface 연결
-//    val friendRequest = retrofit.create(FriendAddService::class.java)
-
-    //---------------------------------------------
-    //-- ViewHolder & ClickListener
     interface OnItemClickListener {
         fun onItemClick(v: View, friend: Info, pos: Int)
     }
@@ -42,12 +28,12 @@ class FriendAddListRVAdapter(private var friendlist: ArrayList<Info>): RecyclerV
         listener = itemClickListener
     }
 
-    // ViewHolder 객체
-    inner class DataViewHoler(private val viewBinding: FriendAddListItemBinding) :
+    inner class DataViewHolder(private val viewBinding: FriendAddListItemBinding) :
         RecyclerView.ViewHolder(viewBinding.root) {
 
         fun bind(item: Info) {
             viewBinding.frName.text = item.name // 이름
+            //viewBinding.frImg.setImageResource(item.profileImage.toInt()) // 이미지
 
             viewBinding.root.setOnClickListener {
                 val pos = adapterPosition
@@ -59,81 +45,51 @@ class FriendAddListRVAdapter(private var friendlist: ArrayList<Info>): RecyclerV
             }
 
             viewBinding.frAddBtn.setOnClickListener {
-                // 친구 추가
-                //friendRequest.friendRequest()
+                addFriend()
             }
         }
     }
 
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DataViewHoler {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): DataViewHolder {
         val binding = FriendAddListItemBinding.inflate(LayoutInflater.from(parent.context), parent, false)
-        return DataViewHoler(binding)
+        return DataViewHolder(binding)
     }
 
-    override fun onBindViewHolder(holder: DataViewHoler, position: Int) {
-        holder.bind(friendlist[position])
+    override fun onBindViewHolder(holder: DataViewHolder, position: Int) {
+        holder.bind(friendList[position])
     }
 
-    override fun getItemCount(): Int = friendlist.size
+    override fun getItemCount(): Int = friendList.size
 
+     // 친구 추가 기능
+    fun addFriend() {
 
+        lateinit var a : FriendAddActivity
 
+        // retrofit 객체
+        val retrofit = Retrofit.Builder()
+            .baseUrl("http://3.35.217.34:8080")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
 
+        val friendAddService = retrofit.create(FriendAddService::class.java)
 
-
-
-
-
-    //-------------------------
-    //-- filter
-    var TAG = "FriendAddListRVAdapter"
-    var filteredPersons = ArrayList<Info>()
-    var itemFilter = ItemFilter()
-    init {
-        filteredPersons.addAll(friendlist)
-    }
-    inner class ItemFilter : Filter() {
-        override fun performFiltering(constraint: CharSequence): FilterResults {
-            val filterString = constraint.toString()
-            val results = FilterResults()
-            Log.d(TAG, "charSequence : $constraint")
-
-            //검색이 필요없을 경우를 위해 원본 배열을 복제
-            val filteredList: ArrayList<Info> = ArrayList<Info>()
-            //공백제외 아무런 값이 없을 경우 -> 원본 배열
-            if (filterString.trim { it <= ' ' }.isEmpty()) {
-                results.values = friendlist
-                results.count = friendlist.size
-
-                return results
-
-            } else {
-                for (person in friendlist) {
-                    if (person.id.toString().contains(filterString)) {
-                        filteredList.add(person)
+        friendAddService.friendRequest(2, 3).enqueue(object : Callback<FriendAddResponse>{
+            override fun onResponse(call: Call<FriendAddResponse>, response: Response<FriendAddResponse>) {
+                if (response.isSuccessful){
+                    val responseData = response.body()
+                    if (responseData != null) {
+                        Log.d("Retrofit","Response\nCode: ${responseData.code} Message: ${responseData.message}")
                     }
+                } else {
+                    Log.w("Retrofit", "Response Not Successful ${response.code()}")
                 }
-                results.values = filteredList
-                results.count = filteredList.size
-
-                return results
             }
-        }
-        @SuppressLint("NotifyDataSetChanged")
-        override fun publishResults(constraint: CharSequence?, results: FilterResults?) {
-            filteredPersons.clear()
-            if (results != null) {
-                filteredPersons.addAll(results.values as ArrayList<Info>)
-            }
-            notifyDataSetChanged()
-        }
-    }
-    override fun getFilter(): Filter {
-        return itemFilter
-    }
 
-    fun filterList(filterList: ArrayList<Info>){
-        friendlist = filterList
-        notifyDataSetChanged()
+            override fun onFailure(call: Call<FriendAddResponse>, t: Throwable) {
+                Log.e("Retrofit", "Error!", t)
+                Toast.makeText(a.applicationContext, "서버와 통신에 실패했습니다.", Toast.LENGTH_SHORT)
+            }
+        })
     }
 }

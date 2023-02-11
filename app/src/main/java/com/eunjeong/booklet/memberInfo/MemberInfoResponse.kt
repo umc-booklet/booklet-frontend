@@ -4,7 +4,7 @@ data class MemberInfoResponse(
     val isSuccess: Boolean,
     val code: Int,
     val message: String,
-    val result: Info
+    val result: ArrayList<Info>
 )
 
 data class Info(

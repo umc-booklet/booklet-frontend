@@ -11,32 +11,24 @@ import android.widget.Toast
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.DividerItemDecoration.VERTICAL
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.eunjeong.booklet.friendListCheck.FriendListCheckService
 import com.eunjeong.booklet.adapters.FriendAddListRVAdapter
 import com.eunjeong.booklet.databinding.FragmentFriendListBinding
-import com.eunjeong.booklet.friendListCheck.FriendListCheckResponse
+import com.eunjeong.booklet.friendSearch.FriendSearchService
 import com.eunjeong.booklet.memberInfo.Info
-import com.eunjeong.booklet.memberInfo.MemberInfoResponse
-import com.eunjeong.booklet.memberInfo.MemberInfoService
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
 
-// LoginActivity (userId) = String i
-// Int i
-class FriendListFragment() : Fragment() {
+class FriendListFragment : Fragment() {
     private lateinit var viewBinding: FragmentFriendListBinding
-    private val friendList: ArrayList<Info> = arrayListOf()
-//    private val i = i.toInt()
-
+    private var searchList = ArrayList<Info>()
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         viewBinding = FragmentFriendListBinding.inflate(layoutInflater)
-
 
         // Item 구분선
         val decoration = DividerItemDecoration(activity, VERTICAL)
@@ -56,61 +48,48 @@ class FriendListFragment() : Fragment() {
             .build()
 
         // retrofit 객체에 Interface 연결
-        val friendListCheckService = retrofit.create(FriendListCheckService::class.java)
-        val memberInfoService = retrofit.create(MemberInfoService::class.java)
+        val searchService = retrofit.create(FriendSearchService::class.java)
 
-        // {userId} 로 친구 목록 조회
-        friendListCheckService.checkFriendList(1).enqueue(object: Callback<FriendListCheckResponse>{
-            override fun onResponse(call: Call<FriendListCheckResponse>, response: Response<FriendListCheckResponse>) {
-                if (response.isSuccessful){
-                    val responseData = response.body()
-                    if (responseData != null) {
-                        Log.d("Retrofit","Response\nCode: ${responseData.code} Message: ${responseData.message}")
-
-                        for ( i in responseData.result ) {
-                            memberInfoService.getCheck(i.friendId).enqueue(object: Callback<MemberInfoResponse> {
-                                override fun onResponse(call: Call<MemberInfoResponse>, response: Response<MemberInfoResponse>) {
-                                    if (response.isSuccessful) {
-                                        val responseData2 = response.body()
-                                        if (responseData2 != null) {
-                                            Log.d("Retrofit", "Response\nCode: ${responseData2.code} Message: ${responseData2.message}")
-                                            friendList.add(responseData2.result)
-                                            Log.d("array1", friendList.toString())
-                                            setAdapter(friendList)
-                                            Log.d("array2", friendList.toString())
-                                        }
-                                    } else {
-                                        Log.w("Retrofit", "Response Not Successful ${response.code()}")
-                                    }
+        // {userId} 로 친구 검색
+        viewBinding.searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
+            androidx.appcompat.widget.SearchView.OnQueryTextListener{
+            //검색 버튼 입력시 호출
+            override fun onQueryTextSubmit(query: String): Boolean {
+                searchService.search(query).enqueue(object : Callback<List<Info>>{
+                    override fun onResponse(call: Call<List<Info>>, response: Response<List<Info>>) {
+                        if (response.isSuccessful){
+                            val responseData = response.body()
+                            if (responseData != null){
+                                for (i in responseData ) {
+                                    searchList.add(i)
+                                    setAdapter(searchList)
                                 }
-
-                                override fun onFailure(call: Call<MemberInfoResponse>, t: Throwable) {
-                                    Log.e("Retrofit", "Error!", t)
-                                    Toast.makeText(activity, "서버와 통신에 실패했습니다.", Toast.LENGTH_SHORT)
-                                }
-                            })
+                            }
+                        } else {
+                            Log.w("Retrofit", "Response Not Successful ${response.code()}")
                         }
                     }
-                } else {
-                    Log.w("Retrofit", "Response Not Successful ${response.code()}")
-                }
-            }
 
-            override fun onFailure(call: Call<FriendListCheckResponse>, t: Throwable) {
-                Log.e("Retrofit","Error!",t)
-                Toast.makeText(activity, "서버와 통신에 실패했습니다.", Toast.LENGTH_SHORT)
+                    override fun onFailure(call: Call<List<Info>>, t: Throwable) {
+                        Log.e("Retrofit", "Error!", t)
+                        Toast.makeText(activity, "서버 통신 오류", Toast.LENGTH_SHORT)
+                    }
+                })
+                return false
+            }
+            //텍스트 입력/수정시 호출
+            override fun onQueryTextChange(newText: String): Boolean {
+                return false
             }
         })
         return viewBinding.root
-    } // onCreateView 끝
+    }
 
     private fun setAdapter(list : ArrayList<Info>){
         val mAdapter = FriendAddListRVAdapter(list)
-        Log.d("array3", friendList.toString())
-        Log.d("item", mAdapter.itemCount.toString())
+        Log.d("ItemCount", list.count().toString())
         viewBinding.rvData.adapter = mAdapter
         viewBinding.rvData.layoutManager = LinearLayoutManager(activity)
-
 
         // 아이템 전체 클릭시 상세 정보
         mAdapter.setOnItemClickListener(object : FriendAddListRVAdapter.OnItemClickListener {
@@ -120,40 +99,23 @@ class FriendListFragment() : Fragment() {
             }
         })
 
-        // 검색창
-        viewBinding.searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
-            androidx.appcompat.widget.SearchView.OnQueryTextListener {
 
-            val searchView = viewBinding.searchBar
-
-            //검색버튼 입력시 호출
-            override fun onQueryTextSubmit(s: String): Boolean {
-                return false
-            }
-
-            //텍스트 입력/수정시에 호출
-            override fun onQueryTextChange(s: String): Boolean {
-                filter(s, mAdapter)
-                return false
-            }
-        })
     }
 
-    // Search View 필터 함수
-    private fun filter(text: String, adapter : FriendAddListRVAdapter) {
-        val filteredlist: ArrayList<Info> = ArrayList()
-        for (item in friendList) {
-            if (item.name.contains(text.toLowerCase())) {
-                filteredlist.add(item)
-            } else if (item in filteredlist) {
-                filteredlist.remove(item)
-            }
-        }
-        if (filteredlist.isEmpty()) {
-            adapter.filterList(filteredlist)
-            Toast.makeText(activity, "No Data Found..", Toast.LENGTH_SHORT).show()
-        } else {
-            adapter.filterList(filteredlist)
-        }
-    }
+
+//    // 친구 추가 알람 Dialog
+//    fun cuDialog(view: View, s: String) {
+//        val binding: DialogLoginAlarmBinding = DialogLoginAlarmBinding.inflate(layoutInflater)
+//        val build = AlertDialog.Builder(view.context).apply {
+//            setView(binding.root) }
+//
+//        val dialog = build.create()
+//        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT)); // 배경 투명
+//        binding.message.text = s
+//        dialog.setCancelable(true)
+//        dialog.show()
+//
+//        binding.ookBtn.setOnClickListener { // Ok 버튼 클릭하면 지우기
+//            dialog.dismiss() }
+//    }
 }

@@ -41,7 +41,7 @@ class FriendAddActivity : AppCompatActivity() {
             .replace(viewBinding.friendcontainer.id, FriendListFragment())
             .commitAllowingStateLoss()
 
-        // 친구 요청 버튼 클릭시 액티비티 교체
+        // 친구 요청 목록 버튼 클릭시 액티비티 교체
         viewBinding.requestbtn.setOnClickListener {
             val intent = Intent(this, FriendRequestActivity::class.java)
             startActivity(intent)
@@ -57,4 +57,5 @@ class FriendAddActivity : AppCompatActivity() {
             else -> super.onOptionsItemSelected(item)
         }
     }
+
 }

@@ -50,7 +50,7 @@ class MyProfileFragment : Fragment() {
         // "이름 : " + viewBinding.infoName.text + "\n" + "코드 : " + viewBinding.infoCode.text
         viewBinding.infoShare.setOnClickListener {
             try {
-                val sendText = "share test" // 공유하려는 내용
+                val sendText = "이름 : " + viewBinding.infoName.text + "\n" + "코드 : " + viewBinding.infoCode.text // 공유하려는 내용
                 val sendIntent = Intent()
                 sendIntent.action = Intent.ACTION_SEND
                 sendIntent.putExtra(Intent.EXTRA_TEXT, sendText)

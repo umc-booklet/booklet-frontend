@@ -138,7 +138,7 @@ class LoginActivity : AppCompatActivity() {
         val dialog = build.create()
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT)); // 배경 투명
         binding.message.text = s
-        dialog.setCancelable(true)
+        dialog.setCancelable(true) // 뒷 배경 클릭시 취소 X
         dialog.show()
 
         binding.ookBtn.setOnClickListener { // Ok 버튼 클릭하면 지우기

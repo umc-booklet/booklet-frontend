@@ -2,7 +2,7 @@ package com.eunjeong.booklet.friendAdd
 
 
 
-data class friendAddResponse(
+data class FriendAddResponse(
     val isSuccess: Boolean,
     val code: Int,
     val message: String,

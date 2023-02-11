@@ -14,24 +14,22 @@ import android.view.ViewGroup
 import android.widget.Toast
 import com.eunjeong.booklet.databinding.FragmentMyProfileBinding
 
-class MyProfileFragment : Fragment() {
+class MyProfileFragment(name: String?, id: String?, img: String?) : Fragment() {
     private lateinit var viewBinding: FragmentMyProfileBinding
+    private val namer = name
+    private val idr = id
+    private val imgr = img
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
         viewBinding = FragmentMyProfileBinding.inflate(layoutInflater)
-        return viewBinding.root
-    }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-
-        //viewBinding.infoName.text = item.name // 이름
-        //viewBinding.infoCode.text = item.id.toString() // 코드
+        viewBinding.infoName.text = namer // 이름
+        viewBinding.infoCode.text = idr // 코드
         //viewBinding.infoImage.setImageResource(item.profileImage) // 이미지
-
 
         // '복사하기' 눌렀을 때 클립보드에 복사.
         viewBinding.infoCopy.setOnClickListener {
@@ -60,5 +58,6 @@ class MyProfileFragment : Fragment() {
                 Log.d("test", "ignored : $ignored")
             }
         }
+        return viewBinding.root
     }
 }

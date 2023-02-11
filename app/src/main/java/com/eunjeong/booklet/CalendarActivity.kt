@@ -69,6 +69,11 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         tbinding = CalendarDayLayoutBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        binding.btnAddGroup.setOnClickListener {
+            val intent = Intent(this, FriendListActivity::class.java)
+            startActivity(intent)
+        }
+
         val daysOfWeek = daysOfWeek() // Available in the library
         val currentMonth = YearMonth.now()
         val startMonth = currentMonth.minusMonths(100)  // Adjust as needed
@@ -643,7 +648,7 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         binding.btnMenu.setOnClickListener {
             drawerLayout.openDrawer(GravityCompat.END) }
 
-        // 로그아웃 버튼 누르면 로그인 화면으로 돌아가기
+        // 로그 아웃 버튼 누르면 로그인 화면으로 돌아가기
         binding.signOutBtn.setOnClickListener {
             val intent = Intent(this@CalendarActivity, LoginActivity::class.java)
             startActivity(intent)

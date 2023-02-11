@@ -23,22 +23,22 @@ class FriendAddActivity : AppCompatActivity() {
         supportActionBar?.setDisplayShowTitleEnabled(false) //기본 앱 제목 보이지 않게 하기
         actionBar?.setDisplayHomeAsUpEnabled(true) // 앱바에 뒤로가기 버튼 만들기
 
-//        // 내 ID 받아오기
-//        val friendAddIntent = intent
-//        val user = friendAddIntent.getStringExtra("userId")
-//        Log.d("value", user.toString()) // 값 확인 필요.
+        // 데이터 받아 오기
+        val myName = intent.getStringExtra("Name")
+        val myId =  intent.getStringExtra("UserId")
+        val myImg = intent.getStringExtra("Img")
 
-        // 각 Fragment에 인자로 넘겨주기
+        // 각 Fragment 인자로 넘겨 주기
         // 내 프로필 Fragment
         supportFragmentManager
             .beginTransaction()
-            .replace(viewBinding.profilecontainer.id, MyProfileFragment())
+            .replace(viewBinding.profilecontainer.id, MyProfileFragment(myName, myId, myImg))
             .commitAllowingStateLoss()
 
         // 친구 추가 속에 친구 목록 Fragment
         supportFragmentManager
             .beginTransaction()
-            .replace(viewBinding.friendcontainer.id, FriendListFragment())
+            .replace(viewBinding.friendcontainer.id, FriendListFragment(myId))
             .commitAllowingStateLoss()
 
         // 친구 요청 목록 버튼 클릭시 액티비티 교체

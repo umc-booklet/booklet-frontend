@@ -11,6 +11,7 @@ import androidx.appcompat.app.AppCompatActivity
 import com.eunjeong.booklet.*
 import com.eunjeong.booklet.databinding.ActivityLoginBinding
 import com.eunjeong.booklet.databinding.DialogLoginAlarmBinding
+import com.google.gson.JsonObject
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -21,8 +22,9 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.converter.scalars.ScalarsConverterFactory
 
 
-class LoginActivity : AppCompatActivity() {
+class LoginActivity : AppCompatActivity(){
     private lateinit var viewBinding : ActivityLoginBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewBinding = ActivityLoginBinding.inflate(layoutInflater)
@@ -44,66 +46,41 @@ class LoginActivity : AppCompatActivity() {
             .build()
 
         // retrofit 객체에 Interface 연결
-//        val jsonBody = JSONObject()
-//        try {
-//            jsonBody.put("userId", userid)
-//            jsonBody.put("password", password)
-//        } catch (e: JSONException) {
-//            e.printStackTrace()
-//        }
-//        val body = RequestBody.create(
-//            MediaType.parse("application/json; charset=utf-8"),
-//            jsonBody.toString()
-//        )
-        // JsonObject 사용
-        val userid =  viewBinding.idt.text.toString()
-        val password = viewBinding.pwdt.text.toString()
-//
-//        val login = JsonObject()
-//        login.addProperty("name", userid)
-//        login.addProperty("password", password)
-
-//
-//        val map = HashMap<String, String>()
-//        val map = HashMap<String, Any>()
-//            map["userId"] = userid
-//            map["password"] = password
-//            return RequestBody.create(MediaType.parse("application/json; charset=utf-8"), JSONObject(map).toString())
-//
-//        val body = RequestBody.create(
-//            MediaType.parse("application/json; charset=utf-8"),
-//            login.toString()
-//        )
-
         val loginService = retrofit.create(LoginService::class.java)
 
-        // 로그인 버튼 누르면
         viewBinding.signinbtn.setOnClickListener {
-            loginService.requestLogin(LoginRequest(userid, password)).enqueue(object: Callback<LoginResponse>{
+            val userid =  viewBinding.idt.text.toString()
+            val password = viewBinding.pwdt.text.toString()
+
+            val login = JsonObject()
+            login.addProperty("userId", userid)
+            login.addProperty("password", password)
+
+            loginService.requestLogin(login).enqueue(object: Callback<LoginResponse>{
                 override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                     if (response.isSuccessful){
                         val responseData = response.body()
                         if (responseData != null) {
                             Log.d("Retrofit","ResponseCode: ${responseData.code} Message: ${responseData.message}") // 기록 남기기
 
-                            if (responseData.code == 1000) { // 제대로 로그인 했을 때
-                                //responseData.result[1]
+                            if (responseData.code == 1000) { // 로그인 성공
+                                // ** 메인 화면 이동
                                 val intent = Intent(this@LoginActivity, CalendarActivity::class.java)
-//                                // **
-//                                val intent2 = Intent(this@LoginActivity, FriendAddActivity::class.java)
-//                                intent2.putExtra("userId", responseData.result.elementAt(1).toString())
-//                                // **
                                 startActivity(intent)
+
+                                // ** {result} 전달
+                                val intent2 = Intent(this@LoginActivity, FriendAddActivity::class.java)
+                                intent2.putExtra("Name", responseData.result.name)
+                                intent2.putExtra("UserId", responseData.result.userId)
+                                intent2.putExtra("Img", responseData.result.profileImage)
+
                             }
 
-                            if (responseData.code != 1000) { // 제대로 로그인 안했을 때
+                            if (responseData.code != 1000) { // 로그인 실패
                                 cuDialog(viewBinding.root, responseData.message)
                             }
 
-                            // 로그인 성공(code = 1000) & 자동 로그인 check, 둘 다 만족하면 정보 저장
-                            // 그리고 다시 앱을 실행했을 때, loginData 자동 완성 (따로 구현)
-                            if (responseData.code == 1000 && viewBinding.auto.isChecked) {
-                                //saveData(loginData)
+                            if (responseData.code == 1000 && viewBinding.auto.isChecked) { // 자동 로그인 체크 & 로그인 성공
                             }
                         }
                     }

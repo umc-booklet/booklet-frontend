@@ -7,6 +7,6 @@ data class LoginResponse(
     val isSuccess: Boolean,
     val code: Int,
     val message: String,
-    val result: ArrayList<Info>
+    val result: Info
 )
 

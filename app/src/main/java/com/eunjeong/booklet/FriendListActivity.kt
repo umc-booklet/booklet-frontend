@@ -1,6 +1,7 @@
 package com.eunjeong.booklet
 
 import android.content.ContentValues.TAG
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.CalendarContract.Attendees.query
@@ -29,6 +30,11 @@ class FriendListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         viewBinding = ActivityFriendListBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
+
+        viewBinding.friendAddBtn.setOnClickListener {
+            val intent = Intent(this, FriendAddActivity::class.java)
+            startActivity(intent)
+        }
 
         friendRV = findViewById(R.id.friendRecyclerView)
         friendList = ArrayList()

@@ -10,19 +10,21 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.eunjeong.booklet.FriendAddActivity
-import com.eunjeong.booklet.databinding.ActivityFriendAddBinding
+import com.eunjeong.booklet.FriendListFragment
 import com.eunjeong.booklet.databinding.DialogRecomfirmAcceptBinding
-import com.eunjeong.booklet.memberInfo.Info
 import com.eunjeong.booklet.databinding.FriendAddListItemBinding
 import com.eunjeong.booklet.friendAdd.FriendAddResponse
 import com.eunjeong.booklet.friendAdd.FriendAddService
+import com.eunjeong.booklet.memberInfo.Info
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class FriendAddListRVAdapter(private var friendList: ArrayList<Info>): RecyclerView.Adapter<FriendAddListRVAdapter.DataViewHolder>() {
+
+class FriendAddListRVAdapter(private var friendList: ArrayList<Info>, id: String?): RecyclerView.Adapter<FriendAddListRVAdapter.DataViewHolder>() {
+    private val myId = id?.toInt()
 
     interface OnItemClickListener {
         fun onItemClick(v: View, friend: Info, pos: Int)
@@ -50,10 +52,13 @@ class FriendAddListRVAdapter(private var friendList: ArrayList<Info>): RecyclerV
             }
 
             viewBinding.frAddBtn.setOnClickListener {
-                //var userId = // 로그인 후 나의 ID 획득
                 var friendId = item.userId.toInt() // 검색 결과로 나온 친구 ID
                 var friendName = item.name // 검색 결과로 나온 친구 이름
-                cuDialog(viewBinding.root, friendName)
+                if (myId != null) {
+                    cuDialog(viewBinding.root, friendName, myId!!, friendId)
+                } else {
+                    Log.d("djgb", "null 이라네 ~!!!!")
+                }
             }
         }
     }
@@ -69,30 +74,27 @@ class FriendAddListRVAdapter(private var friendList: ArrayList<Info>): RecyclerV
 
     override fun getItemCount(): Int = friendList.size
 
-     // 친구 추가 기능 userId: Int, friendId: Int
-
-
     // 친구 추가 재확인 알람 Dialog
-    fun cuDialog(view: View, s: String) {
+    fun cuDialog(view: View, s: String, my: Int, you: Int) {
         val binding: DialogRecomfirmAcceptBinding = DialogRecomfirmAcceptBinding.inflate(LayoutInflater.from(view.context))
         val build = AlertDialog.Builder(view.context).apply {
             setView(binding.root) }
 
         val dialog = build.create()
         dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT)); // 배경 투명
-        binding.message.text = s + "님에게\n친구 요청을 보낼까요?"
+        binding.message.text = s + "님에게\n친구 요청을 하겠습니까?"
         dialog.setCancelable(true)
         dialog.show()
 
         binding.okBtn.setOnClickListener {
-            addFriend()
+            addFriend(my, you)
             dialog.dismiss() }
 
         binding.noBtn.setOnClickListener {
             dialog.dismiss()
         }
     }
-    private fun addFriend() {
+    private fun addFriend(userId: Int, friendId: Int) {
 
         lateinit var a : FriendAddActivity
 
@@ -105,7 +107,7 @@ class FriendAddListRVAdapter(private var friendList: ArrayList<Info>): RecyclerV
         val friendAddService = retrofit.create(FriendAddService::class.java)
 
         // 로그인 해결시 변경
-        friendAddService.friendRequest(2, 3).enqueue(object : Callback<FriendAddResponse>{
+        friendAddService.friendRequest(userId, friendId).enqueue(object : Callback<FriendAddResponse>{
             override fun onResponse(call: Call<FriendAddResponse>, response: Response<FriendAddResponse>) {
                 if (response.isSuccessful){
                     val responseData = response.body()

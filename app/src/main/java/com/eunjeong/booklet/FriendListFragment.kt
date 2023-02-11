@@ -21,9 +21,9 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
 
-class FriendListFragment : Fragment() {
+class FriendListFragment(id: String?) : Fragment() {
     private lateinit var viewBinding: FragmentFriendListBinding
-
+    private val idr = id
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -71,6 +71,7 @@ class FriendListFragment : Fragment() {
                                     } else {
                                         viewBinding.emptyView.isVisible = false
                                         setAdapter(searchList)
+
                                     }
                                 }
                             }
@@ -95,7 +96,8 @@ class FriendListFragment : Fragment() {
     }
 
     private fun setAdapter(list : ArrayList<Info>){
-        val mAdapter = FriendAddListRVAdapter(list)
+
+        val mAdapter = FriendAddListRVAdapter(list, idr)
         viewBinding.rvData.adapter = mAdapter
         viewBinding.rvData.layoutManager = LinearLayoutManager(activity)
 

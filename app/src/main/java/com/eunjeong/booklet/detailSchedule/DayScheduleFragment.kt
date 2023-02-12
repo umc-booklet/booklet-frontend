@@ -95,10 +95,10 @@ class DayScheduleFragment : Fragment() {
 
                     if (responseData != null) {
                         if (responseData.result.size == 0) {
-                            viewBinding.emptyTv.isVisible = true
+                            //viewBinding.emptyTv.isVisible = true
                         } else {
                             for (i in responseData.result) {
-                                viewBinding.emptyTv.isVisible = false
+                                //viewBinding.emptyTv.isVisible = false
                                 if (i.startDay == clickDay || clickDay == i.endDay) {
                                     planId.add(i.id)
 
@@ -150,6 +150,8 @@ class DayScheduleFragment : Fragment() {
         val mAdapter = DayScheduleRVAdapter(list)
         viewBinding.rvSchedule.adapter = mAdapter
         viewBinding.rvSchedule.layoutManager = LinearLayoutManager(activity)
+
+        viewBinding.emptyTv.isVisible = false
     }
 
 

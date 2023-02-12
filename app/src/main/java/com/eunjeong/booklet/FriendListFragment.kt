@@ -1,23 +1,29 @@
 package com.eunjeong.booklet
 
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.SearchView
 import android.widget.Toast
+import androidx.core.view.isVisible
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.DividerItemDecoration.VERTICAL
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.eunjeong.booklet.adapters.FriendAddListRVAdapter
 import com.eunjeong.booklet.databinding.FragmentFriendListBinding
-import com.eunjeong.booklet.datas.Friend
+import com.eunjeong.booklet.friendSearch.FriendSearchService
+import com.eunjeong.booklet.memberInfo.Info
+import okhttp3.OkHttpClient
+import okhttp3.logging.HttpLoggingInterceptor
+import retrofit2.*
+import retrofit2.converter.gson.GsonConverterFactory
 
-class FriendListFragment : Fragment() {
+class FriendListFragment(id: Long) : Fragment() {
     private lateinit var viewBinding: FragmentFriendListBinding
-    private val friendlist: ArrayList<Friend> = arrayListOf()
-    private val friendaddlistRVAdapter = FriendAddListRVAdapter(friendlist)
+    private val idr = id
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -25,80 +31,88 @@ class FriendListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         viewBinding = FragmentFriendListBinding.inflate(layoutInflater)
+        viewBinding.emptyView.isVisible = true
 
+        // Item 구분선
         val decoration = DividerItemDecoration(activity, VERTICAL)
         viewBinding.rvData.addItemDecoration(decoration)
 
-        friendlist.apply {
-            add(Friend(R.drawable.dog, "진부연", "AAAAAAAA"))
-            add(Friend(R.drawable.dog, "진초연", "BBBBBBBB"))
-            add(Friend(R.drawable.dog, "장욱", "CCCCCCCC"))
-            add(Friend(R.drawable.dog, "세자", "DDDDDDDD"))
-            add(Friend(R.drawable.dog, "서율", "FFFFFFFF"))
-            add(Friend(R.drawable.dog, "박당구", "EEEEEEEE"))
-            add(Friend(R.drawable.dog, "박총수", "GGGGGGGG"))
-            add(Friend(R.drawable.dog, "허염", "AAAAAAAA"))
-            add(Friend(R.drawable.dog, "진설란", "AAAAAAAA"))
-            add(Friend(R.drawable.dog, "서경", "AAAAAAAA"))
-            add(Friend(R.drawable.dog, "오내관", "AAAAAAAA"))
-            add(Friend(R.drawable.dog, "진호경", "AAAAAAAA"))
-            add(Friend(R.drawable.dog, "도화", "AAAAAAAA"))
-            add(Friend(R.drawable.dog, "김도주", "AAAAAAAA"))
-            add(Friend(R.drawable.dog, "진무", "AAAAAAAA"))
-            add(Friend(R.drawable.dog, "살수", "AAAAAAAA"))
-            add(Friend(R.drawable.dog, "낙수", "AAAAAAAA"))
-            add(Friend(R.drawable.dog, "조영", "AAAAAAAA"))
-            add(Friend(R.drawable.dog, "조충원", "AAAAAAAA"))
-            add(Friend(R.drawable.dog, "당골네", "AAAAAAAA"))
-        }
+        // client 객체
+        val clientBuilder = OkHttpClient.Builder()
+        val loggingInterceptor = HttpLoggingInterceptor()
+        loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
+        clientBuilder.addInterceptor(loggingInterceptor)
 
-        friendaddlistRVAdapter.notifyDataSetChanged()
+        // retrofit 객체
+        val retrofit = Retrofit.Builder()
+            .baseUrl("http://3.35.217.34:8080")
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(clientBuilder.build()) // client 등록
+            .build()
 
-        viewBinding.rvData.adapter = friendaddlistRVAdapter
-        viewBinding.rvData.layoutManager = LinearLayoutManager(activity)
+        // retrofit 객체에 Interface 연결
+        val searchService = retrofit.create(FriendSearchService::class.java)
 
-        // 아이템 전체 클릭시 상세 정보
-        friendaddlistRVAdapter.setOnItemClickListener(object : FriendAddListRVAdapter.OnItemClickListener {
-            override fun onItemClick(v: View, Friend: Friend, pos: Int) {
-                val detailInfoFragment = FriendDetailFragment(Friend)
-                detailInfoFragment.show(parentFragmentManager, "TAG")
-            }
-        })
-
+        // {userId} 로 친구 검색
         viewBinding.searchBar.setOnQueryTextListener(object : SearchView.OnQueryTextListener,
-            androidx.appcompat.widget.SearchView.OnQueryTextListener {
+            androidx.appcompat.widget.SearchView.OnQueryTextListener{
+            //검색 버튼 입력시 호출
+            override fun onQueryTextSubmit(query: String): Boolean {
+                searchService.search(query).enqueue(object : Callback<List<Info>>{
+                    override fun onResponse(call: Call<List<Info>>, response: Response<List<Info>>) {
+                        if (response.isSuccessful){
+                            val responseData = response.body()
+                            var searchList = ArrayList<Info>() // 새로 초기화
+                            if (responseData != null){
+                                for (i in responseData ) {
+                                    searchList.add(i)
 
-            val searchView = viewBinding.searchBar
+                                    if (searchList.size == 0) {
+                                        viewBinding.emptyView.isVisible = true
+                                    } else {
+                                        viewBinding.emptyView.isVisible = false
+                                        setAdapter(searchList)
 
-            //검색버튼 입력시 호출
-            override fun onQueryTextSubmit(s: String): Boolean {
+                                    }
+                                }
+                            } else {
+                                viewBinding.emptyView.isVisible = true
+                            }
+                        } else {
+                            Log.w("Retrofit", "Response Not Successful ${response.code()}")
+                        }
+                    }
+
+                    override fun onFailure(call: Call<List<Info>>, t: Throwable) {
+                        Log.e("Retrofit", "Error!", t)
+                        Toast.makeText(activity, "서버 통신 오류", Toast.LENGTH_SHORT)
+                    }
+                })
                 return false
             }
-
-            //텍스트 입력/수정시에 호출
-            override fun onQueryTextChange(s: String): Boolean {
-                filter(s)
+            //텍스트 입력/수정시 호출
+            override fun onQueryTextChange(newText: String): Boolean {
                 return false
             }
         })
         return viewBinding.root
     }
 
-    // Search View 필터 함수
-    private fun filter(text: String) {
-        val filteredlist: ArrayList<Friend> = ArrayList()
-        for (item in friendlist) {
-            if (item.id.toLowerCase().contains(text.toLowerCase())) {
-                filteredlist.add(item)
-            } else if (item in filteredlist) {
-                filteredlist.remove(item)
+    private fun setAdapter(list : ArrayList<Info>){
+
+        Log.d("In FriendListFrag", idr.toString())
+        val mAdapter = FriendAddListRVAdapter(list, idr)
+        viewBinding.rvData.adapter = mAdapter
+        viewBinding.rvData.layoutManager = LinearLayoutManager(activity)
+
+        // 아이템 전체 클릭시 상세 정보
+        mAdapter.setOnItemClickListener(object : FriendAddListRVAdapter.OnItemClickListener {
+            override fun onItemClick(v: View, info: Info, pos: Int) {
+                val detailInfoFragment = FriendDetailFragment(info)
+                detailInfoFragment.show(parentFragmentManager, "TAG")
             }
-        }
-        if (filteredlist.isEmpty()) {
-            friendaddlistRVAdapter.filterList(filteredlist)
-            Toast.makeText(activity, "No Data Found..", Toast.LENGTH_SHORT).show()
-        } else {
-            friendaddlistRVAdapter.filterList(filteredlist)
-        }
+        })
+
+
     }
 }

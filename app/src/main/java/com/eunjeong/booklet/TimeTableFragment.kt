@@ -1,25 +1,13 @@
 package com.eunjeong.booklet
 
-import android.graphics.Color
 import android.os.Bundle
 import android.view.LayoutInflater
-import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
-import android.widget.Toast
 import androidx.constraintlayout.widget.ConstraintLayout
-import androidx.core.graphics.toColor
-import androidx.core.graphics.toColorInt
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.akribase.timelineview.Event
-import com.akribase.timelineview.TimelineView
-import com.eunjeong.booklet.adapters.DayScheduleRVAdapter
-import com.eunjeong.booklet.databinding.ActivityCalendarBinding.inflate
 import com.eunjeong.booklet.databinding.FragmentTimeTableBinding
-import kotlinx.android.synthetic.main.fragment_time_table.*
-import kotlinx.android.synthetic.main.nav_header_setting.*
-import java.lang.reflect.Array.get
+
 
 class TimeTableFragment : Fragment() {
     private lateinit var viewBinding: FragmentTimeTableBinding
@@ -46,7 +34,7 @@ class TimeTableFragment : Fragment() {
         }
         viewBinding.timeLineView.timelineEvents = eventList
 //        viewBinding.timeLineView.eventBg = "#FFFFFF".toColorInt() //색깔 구현???
- //       viewBinding.timeLineView.setBackgroundColor("#E6E6E6".toColorInt())
+        //       viewBinding.timeLineView.setBackgroundColor("#E6E6E6".toColorInt())
 
         //        viewBinding.fixScheduleTv.text = 하루종일인 일정 이름 넣기
 

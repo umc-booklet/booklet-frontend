@@ -14,13 +14,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.eunjeong.booklet.adapters.FriendListAdapter
 import com.eunjeong.booklet.databinding.ActivityFriendListBinding
 import com.eunjeong.booklet.datas.Friend
+import com.eunjeong.booklet.login.UserData
 import java.nio.file.Files.size
 import java.util.*
 import kotlin.collections.ArrayList
 
 class FriendListActivity : AppCompatActivity() {
     private lateinit var viewBinding: ActivityFriendListBinding
-
+    private lateinit var userInfo: UserData
     lateinit var friendList: ArrayList<Friend>
     lateinit var friendRVAdapter: FriendListAdapter
     lateinit var friendRV: RecyclerView
@@ -30,6 +31,17 @@ class FriendListActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         viewBinding = ActivityFriendListBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
+
+        if (intent.hasExtra("UserInfo")) {
+            userInfo = intent.getParcelableExtra<UserData>("UserInfo")!!
+            Log.d("데이터 전달 성공 in FriendListActivity", userInfo?.name.toString() + userInfo?.userId.toString() + userInfo?.img.toString() + userInfo.id.toString())
+        }
+
+        viewBinding.friendAddBtn.setOnClickListener {
+            val intent = Intent(this, FriendAddActivity::class.java)
+            intent.putExtra("UserInfo", userInfo)
+            startActivity(intent)
+        }
 
         friendRV = findViewById(R.id.friendRecyclerView)
         friendList = ArrayList()

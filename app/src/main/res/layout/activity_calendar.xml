@@ -162,23 +162,7 @@
             app:layout_constraintRight_toRightOf="parent"
             app:shapeAppearanceOverlay="@style/ShapeAppearanceOverlay.Material3.FloatingActionButton" />
 
-
     </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <com.google.android.material.navigation.NavigationView
-        android:id="@+id/nav_view"
-        android:layout_width="wrap_content"
-        android:layout_height="match_parent"
-        android:layout_gravity="end"
-        android:fitsSystemWindows="true"
-        app:headerLayout="@layout/nav_header_setting"/>
-
-        <!--메뉴 추가할 경우 아래 xml에 추가-->
-        <!-- app:menu="@menu/activity_main_drawer"-->
-
-    <!--메뉴 추가할 경우 아래 xml에 추가-->
-    <!-- app:menu="@menu/activity_main_drawer"-->
-
 
     <!--날짜 누르면 일정 뜨게 하는 Fragment 위함-->
     <FrameLayout
@@ -192,7 +176,36 @@
         app:layout_constraintTop_toTopOf="parent"
         app:layout_constraintVertical_bias="1.0">
 
-
     </FrameLayout>
+
+<!--    NavigationView 가 반드시 맨 밑에 있어야 함. (DrawerLayout 바로 위!)-->
+    <com.google.android.material.navigation.NavigationView
+        android:id="@+id/nav_view"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_gravity="end"
+        android:fitsSystemWindows="true"
+        app:headerLayout="@layout/nav_header_setting">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="bottom"
+            android:gravity="center"
+            android:orientation="horizontal">
+            <Button
+                android:id="@+id/signOutBtn"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center_horizontal"
+                android:paddingBottom="5dp"
+                android:text="로그아웃"
+                android:textColor="#99000000"
+                android:textSize="13sp"
+                android:textStyle="bold"
+                android:background="#00ff0000"
+                android:drawableLeft="@drawable/baseline_logout_24"/>
+        </LinearLayout>
+    </com.google.android.material.navigation.NavigationView>
 
 </androidx.drawerlayout.widget.DrawerLayout>

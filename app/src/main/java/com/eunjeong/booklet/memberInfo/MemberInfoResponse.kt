@@ -4,13 +4,13 @@ data class MemberInfoResponse(
     val isSuccess: Boolean,
     val code: Int,
     val message: String,
-    val result: Info
+    val result: List<Info>
 )
 
 data class Info(
     val id: Long,
+    val userId: String,
     val name: String,
-    val phoneNumber: String,
     val status: String,
     val profileImage: String
 )

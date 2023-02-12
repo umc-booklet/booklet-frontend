@@ -2,11 +2,11 @@ package com.eunjeong.booklet.friendAdd
 
 
 
-data class friendAddResponse(
+data class FriendAddResponse(
     val isSuccess: Boolean,
     val code: Int,
     val message: String,
-    val result: ArrayList<Add>
+    val result: Add
 )
 
 data class Add(

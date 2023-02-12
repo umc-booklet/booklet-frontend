@@ -10,5 +10,5 @@ interface FriendAddService {
     fun friendRequest(
         @Path("userId") userId: Int,
         @Path("friendId") friendId: Int
-    ): Call<friendAddResponse>
+    ): Call<FriendAddResponse>
 }

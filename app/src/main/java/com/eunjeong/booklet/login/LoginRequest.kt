@@ -1,6 +1,6 @@
 package com.eunjeong.booklet.login
 
 data class LoginRequest(
-    val name: String,
+    val userId: String,
     val password: String
 )

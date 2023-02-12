@@ -3,9 +3,11 @@ package com.eunjeong.booklet
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
@@ -16,14 +18,19 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.children
 import androidx.drawerlayout.widget.DrawerLayout
+import androidx.navigation.findNavController
 import com.eunjeong.booklet.databinding.ActivityCalendarBinding
 import com.eunjeong.booklet.databinding.CalendarDayLayoutBinding
+import com.eunjeong.booklet.login.LoginActivity
+import com.eunjeong.booklet.login.UserData
 import com.google.android.material.navigation.NavigationView
 import com.kizitonwose.calendar.core.*
 import com.kizitonwose.calendar.view.MonthDayBinder
 import com.kizitonwose.calendar.view.MonthHeaderFooterBinder
 import com.kizitonwose.calendar.view.ViewContainer
 import kotlinx.android.synthetic.main.activity_calendar.*
+import kotlinx.android.synthetic.main.nav_header_setting.*
+import kotlinx.android.synthetic.main.nav_header_setting.view.*
 import java.text.SimpleDateFormat
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -43,6 +50,7 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
     private var selectedDate: LocalDate? = null
     var checkDaySelected: Boolean = true
     lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
+    private lateinit var userInfo: UserData
 
     var eventTitle = ""
     var switchChecked = ""
@@ -64,6 +72,17 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         binding = ActivityCalendarBinding.inflate(layoutInflater)
         tbinding = CalendarDayLayoutBinding.inflate(layoutInflater)
         setContentView(binding.root)
+
+        if (intent.hasExtra("UserInfo")) {
+            userInfo = intent.getParcelableExtra<UserData>("UserInfo")!!
+            Log.d("데이터 전달 성공 in Cal", userInfo?.name.toString() + userInfo?.userId.toString() + userInfo?.img.toString() + userInfo.id.toString())
+        }
+
+        binding.btnAddGroup.setOnClickListener {
+            val intent = Intent(this, FriendListActivity::class.java)
+            intent.putExtra("UserInfo", userInfo)
+            startActivity(intent)
+        }
 
         val daysOfWeek = daysOfWeek() // Available in the library
         val currentMonth = YearMonth.now()
@@ -635,16 +654,32 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
 
         navView.setNavigationItemSelectedListener(this)
 
-        // 메뉴(설정) 버튼 눌렀을 때 Navigation drawrer 보이기
+        // 메뉴(설정) 버튼 눌렀을 때 Navigation drawer 보이기
         binding.btnMenu.setOnClickListener {
             drawerLayout.openDrawer(GravityCompat.END) }
 
-        // 네비게이션 헤더 메뉴에 클릭 이벤트 연결
+        // 로그 아웃 버튼 누르면 로그인 화면으로 돌아가기
+        binding.signOutBtn.setOnClickListener {
+            val intent = Intent(this@CalendarActivity, LoginActivity::class.java)
+            startActivity(intent)
+        }
+
+        // Navigation Header 메뉴에 클릭 이벤트 연결
         val headerView = navView.getHeaderView(0)
         val back = headerView.findViewById<ImageButton>(R.id.backbtn)
+        val edit = headerView.findViewById<Button>(R.id.editbtn)
+
+        // 받아온 데이터로 내 정보 표출
+        headerView.name.text = userInfo.name
+        headerView.code.text = userInfo.userId
+        //headerView.img.setImageResource(userInfo.img.toInt())
+
         back.setOnClickListener { // drawer 닫기
-            drawerLayout.closeDrawer(GravityCompat.END)
-        }
+            drawerLayout.closeDrawer(GravityCompat.END) }
+
+        edit.setOnClickListener {  // 편집 버튼
+            val intent = Intent(this@CalendarActivity, ManageMyProfileActivity::class.java)
+            startActivity(intent) }
     }
 
     // Drawer content 내 메뉴 클릭 이벤트 처리하는 함수

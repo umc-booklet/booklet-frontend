@@ -1,12 +1,19 @@
 package com.eunjeong.booklet.login
 
 import android.content.Intent
+import android.graphics.Color
+import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.os.Parcel
+import android.os.Parcelable
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.eunjeong.booklet.*
 import com.eunjeong.booklet.databinding.ActivityLoginBinding
+import com.eunjeong.booklet.databinding.DialogLoginAlarmBinding
+import com.google.gson.JsonObject
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Call
@@ -14,38 +21,28 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.converter.scalars.ScalarsConverterFactory
 
-class LoginActivity : AppCompatActivity() {
+
+class LoginActivity : AppCompatActivity(){
     private lateinit var viewBinding : ActivityLoginBinding
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewBinding = ActivityLoginBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
-
-//        val pref = getSharedPreferences("userdata", MODE_PRIVATE)
-//        val savedData =pref.getString("logindata", "").toString()
-//        Log.d(TAG, savedData)
-//
-//        if (logindata.equals("")){
-//        } else {
-//            val intent = Intent(applicationContext, CalendarActivity::class.java)
-//            startActivity(intent)
-//            Toast.makeText(this, "로그인 하였습니다", Toast.LENGTH_SHORT).show()
-//            finish()
-//        }
-
-        val name =  viewBinding.idt.text.toString()
-        val password = viewBinding.pwdt.text.toString()
 
         // client 객체
         val clientBuilder = OkHttpClient.Builder()
         val loggingInterceptor = HttpLoggingInterceptor()
         loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
         clientBuilder.addInterceptor(loggingInterceptor)
+        clientBuilder.retryOnConnectionFailure(true)
 
         // retrofit 객체
         val retrofit = Retrofit.Builder()
             .baseUrl("http://3.35.217.34:8080")
+            .addConverterFactory(ScalarsConverterFactory.create())
             .addConverterFactory(GsonConverterFactory.create())
             .client(clientBuilder.build()) // client 등록
             .build()
@@ -53,28 +50,35 @@ class LoginActivity : AppCompatActivity() {
         // retrofit 객체에 Interface 연결
         val loginService = retrofit.create(LoginService::class.java)
 
-        // 로그인 버튼 누르면
         viewBinding.signinbtn.setOnClickListener {
-            loginService.requestLogin(LoginRequest(name, password)).enqueue(object: Callback<LoginResponse>{
+            val userid =  viewBinding.idt.text.toString()
+            val password = viewBinding.pwdt.text.toString()
+
+            val login = JsonObject()
+            login.addProperty("userId", userid)
+            login.addProperty("password", password)
+
+            loginService.requestLogin(login).enqueue(object: Callback<LoginResponse>{
                 override fun onResponse(call: Call<LoginResponse>, response: Response<LoginResponse>) {
                     if (response.isSuccessful){
                         val responseData = response.body()
-                        val dialog = AlertDialog.Builder(this@LoginActivity)
                         if (responseData != null) {
-                            Log.d("Retrofit","Response\nCode: ${responseData.code} Message: ${responseData.message}")
-                            dialog.setTitle("결과")
-                            dialog.setMessage("code = " + responseData.code + ", msg = " + responseData.message)
-                            dialog.show()
+                            Log.d("Retrofit","ResponseCode: ${responseData.code} Message: ${responseData.message}") // 기록 남기기
 
-                            if (responseData.code == 1000) {
+                            if (responseData.code == 1000) { // 로그인 성공
+                                // ** 메인 화면 이동
                                 val intent = Intent(this@LoginActivity, CalendarActivity::class.java)
+                                var userData = UserData(responseData.result.name, responseData.result.userId, responseData.result.profileImage, responseData.result.id)
+                                intent.putExtra("UserInfo", userData)
                                 startActivity(intent)
                             }
 
-                            // 로그인 성공(code = 1000) & 자동 로그인 check, 둘 다 만족하면 정보 저장
-                            // 그리고 다시 앱을 실행했을 때, loginData 자동 완성 (따로 구현)
-                            if (responseData.code == 1000 && viewBinding.auto.isChecked) {
-                                //saveData(loginData)
+                            if (responseData.code != 1000) { // 로그인 실패
+                                cuDialog(viewBinding.root, responseData.message)
+                            }
+
+                            if (responseData.code == 1000 && viewBinding.auto.isChecked) { // 자동 로그인 체크 & 로그인 성공
+                                //StartForResult
                             }
                         }
                     }
@@ -100,10 +104,50 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 
-//    fun saveData(loginData: LoginRequest){
-//        val pref = getSharedPreferences("userdata", MODE_PRIVATE)
-//        val edit = pref.edit() // 수정
-//        edit.putString("logindata", loginData.toString()) // 값 넣기
-//        edit.apply() // 적용
-//    }
+    // 로그인 알람 Dialog
+    fun cuDialog(view: View, s: String) {
+        val binding: DialogLoginAlarmBinding = DialogLoginAlarmBinding.inflate(layoutInflater)
+        val build = AlertDialog.Builder(view.context).apply {
+            setView(binding.root) }
+
+        val dialog = build.create()
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT)); // 배경 투명
+        binding.message.text = s
+        dialog.setCancelable(true) // 뒷 배경 클릭시 취소 X
+        dialog.show()
+
+        binding.ookBtn.setOnClickListener { // Ok 버튼 클릭하면 지우기
+            dialog.dismiss() }
+    }
+}
+
+class UserData(var name: String?, var userId: String?, var img: String?, var id: Long): Parcelable {
+    constructor(parcel: Parcel) : this(
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readLong()) {
+    }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(name)
+        parcel.writeString(userId)
+        parcel.writeString(img)
+        parcel.writeLong(id)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<UserData> {
+        override fun createFromParcel(parcel: Parcel): UserData {
+            return UserData(parcel)
+        }
+
+        override fun newArray(size: Int): Array<UserData?> {
+            return arrayOfNulls(size)
+        }
+    }
+
 }

@@ -1,12 +1,9 @@
 package com.eunjeong.booklet
 
-import android.content.ContentValues.TAG
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.CalendarContract.Attendees.query
 import android.util.Log
-import android.widget.Filterable
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -20,16 +17,14 @@ import com.eunjeong.booklet.memberInfo.MemberInfoResponse
 import com.eunjeong.booklet.memberInfo.MemberInfoService
 import retrofit2.Call
 import retrofit2.Callback
-import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.nio.file.Files.size
-import java.util.*
+import com.eunjeong.booklet.login.UserData
 import kotlin.collections.ArrayList
 
 class FriendListActivity : AppCompatActivity() {
     private lateinit var viewBinding: ActivityFriendListBinding
-
+    private lateinit var userInfo: UserData
     lateinit var friendList: ArrayList<Friend>
     lateinit var friendRVAdapter: FriendListAdapter
     lateinit var friendRV: RecyclerView
@@ -40,50 +35,55 @@ class FriendListActivity : AppCompatActivity() {
         viewBinding = ActivityFriendListBinding.inflate(layoutInflater)
         setContentView(viewBinding.root)
 
+        if (intent.hasExtra("UserInfo")) {
+            userInfo = intent.getParcelableExtra<UserData>("UserInfo")!!
+            Log.d("데이터 전달 성공 in FriendListActivity", userInfo?.name.toString() + userInfo?.userId.toString() + userInfo?.img.toString() + userInfo.id.toString())
+        }
+
+        viewBinding.friendAddBtn.setOnClickListener {
+            val intent = Intent(this, FriendAddActivity::class.java)
+            intent.putExtra("UserInfo", userInfo)
+            startActivity(intent)
+        }
+
         friendRV = findViewById(R.id.friendRecyclerView)
         friendList = ArrayList()
         friendRVAdapter = FriendListAdapter(friendList)
         friendRV.adapter = friendRVAdapter
 
 
-
         val retrofit = Retrofit.Builder()
-            .baseUrl("http://3.35.217.34:8080")
+            .baseUrl("http://3.35.217.34:8080/")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
         val apiService = retrofit.create(FriendListCheckService::class.java)
         val memberinfoService = retrofit.create(MemberInfoService::class.java)
         
-        apiService.checkFriendList(1). enqueue(object: Callback<FriendListCheckResponse>{
-            override fun onResponse(
-                call: Call<FriendListCheckResponse>,
-                response: retrofit2.Response<FriendListCheckResponse>
+        apiService.checkFriendList(22). enqueue(object: Callback<FriendListCheckResponse>{
+            override fun onResponse(call: Call<FriendListCheckResponse>, response: retrofit2.Response<FriendListCheckResponse>
             ) {
-
                 if(response.isSuccessful){
                     val responseData = response.body()
                     if(responseData != null){
-                        Log.d("Retrofit", "서버 연결 성공")
-                        Log.d("Retrofit","Response\nCode: ${responseData.code} Message: ${responseData.message}")
 
-//                        if (responseData.code == 1000) {
-//                            Log.d("responseData.code == 1000", "true")
-//                        }
                         for(i in responseData.result){
-                            memberinfoService.getCheck(i.friendId).enqueue(object: Callback<MemberInfoResponse>{
-                                override fun onResponse(
-                                    call: Call<MemberInfoResponse>,
-                                    response: Response<MemberInfoResponse>
+                            Log.d("Retrofit i", "${i.friendId}")
+                            Log.d("Retrofit", "서버 연결 성공")
+                            Log.d("Retrofit","Response\nCode: ${responseData.code} Message: ${responseData.message}")
+
+                            val temp = i.friendId.toLong()
+                            memberinfoService.getCheck(temp).enqueue(object: Callback<MemberInfoResponse>{
+                                override fun onResponse(call: Call<MemberInfoResponse>,response: retrofit2.Response<MemberInfoResponse>
                                 ) {
                                     if(response.isSuccessful){
-                                        val responseData2 = response.body().info()
+                                        val responseData2 = response.body()
                                         if(responseData2 != null){
                                             Log.d("Retrofit", "Response\nCode: ${responseData2.code} Message: ${responseData2.message}")
-                                            friendList.add(Friend(R.drawable.ex_profile1, responseData2.in, responseData2.message)) // 첫번쨰 사진, 두번째 이름, 세번째 id 넣어야함
-                                            Log.d("retrofit array1", friendList.toString())
-                                            //setAdapter(friendList)
-                                            Log.d("array2", friendList.toString())
+                                            for(j in responseData2.result) {
+                                                friendList.add(Friend(R.drawable.ex_profile1, j.name, j.userId)) // 첫번쨰 사진, 두번째 이름, 세번째 id 넣어야함
+                                                Log.d("retrofit array", friendList.toString())
+                                            }
                                         }
                                     }else {
                                         Log.w(
@@ -99,16 +99,11 @@ class FriendListActivity : AppCompatActivity() {
 
                             })
                         }
-
-
-
                     }
                     else {
                         Log.w("Retrofit", "Response Not Successful ${response.code()}")
                     }
                 }
-
-
 
             }
 
@@ -117,19 +112,19 @@ class FriendListActivity : AppCompatActivity() {
             }
 
         })
-        friendList.add(Friend(R.drawable.ex_profile1, "이은정", "dkan9634"))
-        friendList.add(Friend(R.drawable.ex_profile2, "이은딩", "eunding"))
-        friendList.add(Friend(R.drawable.ex_profile1, "김니나", "ninanina"))
-        friendList.add(Friend(R.drawable.ex_profile1, "김현나", "hyunna"))
-        friendList.add(Friend(R.drawable.ex_profile2, "박최이", "choilee"))
-        friendList.add(Friend(R.drawable.ex_profile2, "박이최", "leechoi"))
-        friendList.add(Friend(R.drawable.ex_profile2, "방은솔", "eunsol"))
-        friendList.add(Friend(R.drawable.ex_profile1, "장우욱", "wuwuk"))
-        friendList.add(Friend(R.drawable.ex_profile1, "진부연", "buyeon"))
-        friendList.add(Friend(R.drawable.ex_profile1, "진진진", "jinjin"))
-        friendList.add(Friend(R.drawable.ex_profile2, "미미미", "meme"))
-        friendList.add(Friend(R.drawable.ex_profile2, "쿠쿠쿠", "cucucu"))
-        friendList.add(Friend(R.drawable.ex_profile2, "키키키", "kikiki"))
+//        friendList.add(Friend(R.drawable.ex_profile1, "이은정", "dkan9634"))
+//        friendList.add(Friend(R.drawable.ex_profile2, "이은딩", "eunding"))
+//        friendList.add(Friend(R.drawable.ex_profile1, "김니나", "ninanina"))
+//        friendList.add(Friend(R.drawable.ex_profile1, "김현나", "hyunna"))
+//        friendList.add(Friend(R.drawable.ex_profile2, "박최이", "choilee"))
+//        friendList.add(Friend(R.drawable.ex_profile2, "박이최", "leechoi"))
+//        friendList.add(Friend(R.drawable.ex_profile2, "방은솔", "eunsol"))
+//        friendList.add(Friend(R.drawable.ex_profile1, "장우욱", "wuwuk"))
+//        friendList.add(Friend(R.drawable.ex_profile1, "진부연", "buyeon"))
+//        friendList.add(Friend(R.drawable.ex_profile1, "진진진", "jinjin"))
+//        friendList.add(Friend(R.drawable.ex_profile2, "미미미", "meme"))
+//        friendList.add(Friend(R.drawable.ex_profile2, "쿠쿠쿠", "cucucu"))
+//        friendList.add(Friend(R.drawable.ex_profile2, "키키키", "kikiki"))
         friendList.add(Friend(R.drawable.ex_profile1, "콕콕콕", "cokcok"))
 
         friendRVAdapter.notifyDataSetChanged()

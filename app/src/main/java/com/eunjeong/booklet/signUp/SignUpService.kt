@@ -14,4 +14,6 @@ interface SignUpService {
         @Body signUpData: SignUpRequest
     ) :Call<Response<Void>>
 
+    
+
 }

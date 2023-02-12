@@ -5,7 +5,7 @@ data class FriendListCheckResponse(
     val isSuccess: Boolean,
     val code: Int,
     val message: String,
-    val result: ArrayList<FriendID> // ex. "friendid" : 3
+    val result: List<FriendID> // ex. "friendid" : 3
 )
 
 data class FriendID(

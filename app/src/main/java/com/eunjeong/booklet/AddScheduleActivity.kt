@@ -1,36 +1,38 @@
 package com.eunjeong.booklet
 
-import com.eunjeong.booklet.R
-import android.app.usage.UsageEvents.Event.NONE
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.View
 import android.view.ViewGroup
 import android.view.animation.TranslateAnimation
 import android.widget.TextView
 import android.widget.TimePicker
-import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.children
 import androidx.core.view.isVisible
 import com.eunjeong.booklet.databinding.ActivityAddScheduleBinding
 import com.eunjeong.booklet.databinding.BottomSheetDialogLayoutBinding
 import com.eunjeong.booklet.databinding.CalendarAddEventLayoutBinding
-import com.google.android.material.bottomsheet.BottomSheetBehavior
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.kizitonwose.calendar.core.*
 import com.kizitonwose.calendar.view.MonthDayBinder
 import com.kizitonwose.calendar.view.MonthHeaderFooterBinder
 import com.kizitonwose.calendar.view.ViewContainer
 import kotlinx.android.synthetic.main.activity_add_schedule.*
-import kotlinx.android.synthetic.main.activity_calendar.*
+import okhttp3.OkHttpClient
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.Month
 import java.time.YearMonth
+import java.time.format.DateTimeFormatter
 import java.time.format.TextStyle
-import java.time.temporal.ChronoUnit
 import java.util.*
 
 
@@ -38,8 +40,6 @@ class AddScheduleActivity : AppCompatActivity() {
 
     private lateinit var binding: ActivityAddScheduleBinding
     private lateinit var dialogbinding: BottomSheetDialogLayoutBinding
-    private val titleRes: Int? = null
-    private val today = LocalDate.now()
     private var selectedDate: LocalDate? = null
     var selected = 0
     var existingStartTime: String = ""
@@ -50,6 +50,9 @@ class AddScheduleActivity : AppCompatActivity() {
     var nonStringStartDate: LocalDate? = null
     var nonStringEndDate: LocalDate? = null
 
+    var selectedCurrentDate: LocalDate? = null
+
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityAddScheduleBinding.inflate(layoutInflater)
@@ -59,18 +62,6 @@ class AddScheduleActivity : AppCompatActivity() {
         // x 버튼 동작
         binding.btnCloseAddSchedule.setOnClickListener {
             finish()
-        }
-
-        // 하루종일 switch checked면 밑에 시간 지우기
-        binding.switchAllDay.setOnCheckedChangeListener { _, isChecked ->
-            if (isChecked) {
-                binding.startTime.isVisible = false
-                binding.endTime.isVisible = false
-            }
-            else {
-                binding.startTime.isVisible = true
-                binding.endTime.isVisible = true
-            }
         }
 
 
@@ -138,6 +129,23 @@ class AddScheduleActivity : AppCompatActivity() {
         val endtimePicker: TimePicker = endbottomSheetView.findViewById(R.id.timepicker)
         val startTimeText: TextView = binding.startTime
         val endTimeText: TextView = binding.endTime
+
+        // 하루종일 switch checked면 밑에 시간 지우기
+        binding.switchAllDay.setOnCheckedChangeListener { _, isChecked ->
+            if (isChecked) {
+                binding.startTime.isVisible = false
+                binding.endTime.isVisible = false
+                binding.endDate.text = binding.startDate.text
+                timePicker.hour = 0
+                timePicker.minute = 0
+                endtimePicker.hour = 23
+                endtimePicker.minute = 59
+            }
+            else {
+                binding.startTime.isVisible = true
+                binding.endTime.isVisible = true
+            }
+        }
 
         // 최초로 timepicker을 호출했을 때 기본 시간 설정 (두번째부터는 지정한 시간으로 뜸)
         timePicker.hour = 8
@@ -217,9 +225,15 @@ class AddScheduleActivity : AppCompatActivity() {
         val bundle = intent.extras
         val checkDaySelected = bundle!!.getString("checkDaySelected")
         if (checkDaySelected != null) { // 선택된 요일이 있는 경우
+            val selectedYear = bundle.getString("selectedYear") // 연
             val selectedMonth = bundle.getString("selectedMonth") // 월
             val selectedDay = bundle.getString("selectedDay") // 일
             var selectedDayofWeek = bundle.getString("selectedDayofWeek") // 요일
+
+            val selecteddayString = "%d-%02d-%02d".format(selectedYear!!.toInt(), selectedMonth!!.toInt(), selectedDay!!.toInt())
+            val selecteddayLocalDate = LocalDate.parse(selecteddayString, DateTimeFormatter.ISO_DATE)
+            selectedCurrentDate = selecteddayLocalDate
+
             when (selectedDayofWeek) {
                 "SUNDAY" -> {
                     selectedDayofWeek = "일"
@@ -248,9 +262,14 @@ class AddScheduleActivity : AppCompatActivity() {
             binding.endDate.text = "%s월 %s일 (%s)".format(selectedMonth, selectedDay, selectedDayofWeek)
         }
         else { // 선택된 요일이 없는 경우 오늘 날짜
+            val todayYear = bundle.getString("todayYear") // 연
             var todayMonth = bundle.getString("todayMonth") // 월
             val todayDay = bundle.getString("todayDay") // 일
             var todayDayofWeek = bundle.getString("todayDayofWeek") // 요일
+
+            val selecteddayString = "%d-%02d-%02d".format(todayYear!!.toInt(), todayMonth!!.toInt(), todayDay!!.toInt())
+            val selecteddayLocalDate = LocalDate.parse(selecteddayString, DateTimeFormatter.ISO_DATE)
+            selectedCurrentDate = selecteddayLocalDate
 
             when (todayMonth) {
                 "JANUARY" -> {
@@ -379,7 +398,7 @@ class AddScheduleActivity : AppCompatActivity() {
 
             monthScrollListener = { updateTitle() }
             setup(startMonth, endMonth, daysOfWeek.first())
-            scrollToMonth(currentMonth)
+            scrollToMonth(YearMonth.of(selectedCurrentDate!!.year, selectedCurrentDate!!.month))
         }
 
         binding.scheduleCalendar.dayBinder = object : MonthDayBinder<DayViewContainer> {
@@ -461,7 +480,7 @@ class AddScheduleActivity : AppCompatActivity() {
         // 달력 시작 요일 설정, 앱 실행 시 현재에 해당하는 월 보여주기
         val firstDayOfWeek = firstDayOfWeekFromLocale() // Available from the library
         binding.scheduleCalendar.setup(startMonth, endMonth, firstDayOfWeek)
-        binding.scheduleCalendar.scrollToMonth(currentMonth)
+        binding.scheduleCalendar.scrollToMonth(YearMonth.of(selectedCurrentDate!!.year, selectedCurrentDate!!.month))
 
 
 
@@ -470,7 +489,7 @@ class AddScheduleActivity : AppCompatActivity() {
         titlesContainer.children
             .map { it as TextView }
             .forEachIndexed { index, textView ->
-                currentMonth.month.displayText(short = false)
+                selectedCurrentDate!!.month.displayText(short = false)
             }
 
 
@@ -505,28 +524,23 @@ class AddScheduleActivity : AppCompatActivity() {
 
         // 완료 버튼 동작 (데이터 넘기기)
         binding.btnAddComplete.setOnClickListener {
+            val eventTitle = binding.editScheduleTitle.text.toString()
+            val eventColor = eventColor
+
+            val startTimePicker: TimePicker = bottomSheetView.findViewById(R.id.timepicker)
+            val endTimePicker: TimePicker = endbottomSheetView.findViewById(R.id.timepicker)
+
+
             val intent = Intent(this, CalendarActivity::class.java).apply {
-                putExtra("eventTitle", binding.editScheduleTitle.text.toString()) // 일정 제목
-                putExtra("switchChecked", binding.switchAllDay.isChecked.toString())
-                // 하루종일 스위치가 체크인 경우 / 아닌 경우
+
                 if (binding.switchAllDay.isChecked) {
-                    putExtra("allDayEventDate", binding.startDate.text.toString())
+                    val addPlanInfo = PlanRequest(UserInformation.memberId, eventTitle, "", eventColor, nonStringStartDate!!.year, nonStringStartDate!!.monthValue, nonStringStartDate!!.dayOfMonth, 0, 0, nonStringStartDate!!.year, nonStringStartDate!!.monthValue, nonStringStartDate!!.dayOfMonth, 23, 59)
+                    addPlanOnServer(addPlanInfo)
                 }
                 else {
-                    putExtra("startDate", binding.startDate.text.toString())
-                    putExtra("endDate", binding.endDate.text.toString())
-                    putExtra("startTime", binding.startTime.text.toString())
-                    putExtra("endTime", binding.endTime.text.toString())
-                    if (nonStringStartDate == null && nonStringEndDate == null) {
-                        putExtra("nonStringStartDate", "")
-                        putExtra("nonStringEndDate", "")
-                    }
-                    else {
-                        putExtra("nonStringStartDate", nonStringStartDate.toString())
-                        putExtra("nonStringEndDate", nonStringEndDate.toString())
-                    }
+                    val addPlanInfo = PlanRequest(UserInformation.memberId, eventTitle, "", eventColor, nonStringStartDate!!.year, nonStringStartDate!!.monthValue, nonStringStartDate!!.dayOfMonth, startTimePicker.hour, startTimePicker.minute, nonStringEndDate!!.year, nonStringEndDate!!.monthValue, nonStringEndDate!!.dayOfMonth, endTimePicker.hour, endtimePicker.minute)
+                    addPlanOnServer(addPlanInfo)
                 }
-                putExtra("eventColor", eventColor) // 설정한 이벤트 표시 색상
             }
 
             setResult(RESULT_OK, intent)
@@ -555,8 +569,40 @@ class AddScheduleActivity : AppCompatActivity() {
         return getDisplayName(style, Locale.getDefault())
     }
 
+    private fun addPlanOnServer(addPlanInfo: PlanRequest) {
+        val clientBuilder = OkHttpClient.Builder()
+
+        val retrofit = Retrofit.Builder()
+            .baseUrl("http://3.35.217.34:8080")
+            .addConverterFactory(GsonConverterFactory.create())
+            .client(clientBuilder.build())
+            .build()
+
+        val retrofitPlanService = retrofit.create(RetrofitPlanService::class.java)
+        retrofitPlanService.addPlan(addPlanInfo).enqueue(object: Callback<PlanResponse> {
+            override fun onResponse(call: Call<PlanResponse>, response: Response<PlanResponse>) {
+                val responseData = response.body()
+                if (responseData != null) {
+                    Log.d("thisistag", "성공 여부: ${responseData.isSuccess}, message: ${responseData.message}, code: ${responseData.code}, result: ${responseData.result}")
+                }
+                else {
+                    Log.d("thisistag", "data null")
+                }
+            }
+
+            override fun onFailure(call: Call<PlanResponse>, t: Throwable) {
+                Log.e("thisistag", t.toString())
+            }
+
+        })
+
+            }
+
+
+
+    }
 
 
 
 
-}
+

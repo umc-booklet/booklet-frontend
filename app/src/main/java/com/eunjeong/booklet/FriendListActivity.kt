@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.eunjeong.booklet.adapters.FriendListAdapter
 import com.eunjeong.booklet.databinding.ActivityFriendListBinding
 import com.eunjeong.booklet.datas.Friend
+import com.eunjeong.booklet.friendAdd.FriendAddActivity
 import com.eunjeong.booklet.login.UserData
 import java.nio.file.Files.size
 import java.util.*
@@ -83,12 +84,6 @@ class FriendListActivity : AppCompatActivity() {
                 return false
             }
         })
-
-        // 이미지 버튼 - 친구 추가 액티비티 연결
-        viewBinding.friendAddBtn.setOnClickListener {
-            val intent = Intent(this, FriendAddActivity::class.java)
-            startActivity(intent)
-        }
     }
 
     private fun filter(text: String) {

@@ -1,4 +1,4 @@
-package com.eunjeong.booklet
+package com.eunjeong.booklet.friendAdd
 
 import android.R
 import android.content.Intent
@@ -8,6 +8,7 @@ import android.view.MenuItem
 import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
+import com.eunjeong.booklet.FriendRequestActivity
 import com.eunjeong.booklet.databinding.ActivityFriendAddBinding
 import com.eunjeong.booklet.login.UserData
 

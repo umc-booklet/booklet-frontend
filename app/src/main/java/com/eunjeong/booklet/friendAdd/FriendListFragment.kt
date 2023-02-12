@@ -1,4 +1,4 @@
-package com.eunjeong.booklet
+package com.eunjeong.booklet.friendAdd
 
 import android.os.Bundle
 import android.util.Log
@@ -17,7 +17,7 @@ import com.eunjeong.booklet.databinding.FragmentFriendListBinding
 import com.eunjeong.booklet.friendSearch.FriendSearchService
 import com.eunjeong.booklet.memberInfo.Info
 import okhttp3.OkHttpClient
-import okhttp3.logging.HttpLoggingInterceptor
+//import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
 
@@ -38,16 +38,16 @@ class FriendListFragment(id: Long) : Fragment() {
         viewBinding.rvData.addItemDecoration(decoration)
 
         // client 객체
-        val clientBuilder = OkHttpClient.Builder()
-        val loggingInterceptor = HttpLoggingInterceptor()
-        loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
-        clientBuilder.addInterceptor(loggingInterceptor)
+//        val clientBuilder = OkHttpClient.Builder()
+//        val loggingInterceptor = HttpLoggingInterceptor()
+//        loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
+//        clientBuilder.addInterceptor(loggingInterceptor)
 
         // retrofit 객체
         val retrofit = Retrofit.Builder()
             .baseUrl("http://3.35.217.34:8080")
             .addConverterFactory(GsonConverterFactory.create())
-            .client(clientBuilder.build()) // client 등록
+           // .client(clientBuilder.build()) // client 등록
             .build()
 
         // retrofit 객체에 Interface 연결

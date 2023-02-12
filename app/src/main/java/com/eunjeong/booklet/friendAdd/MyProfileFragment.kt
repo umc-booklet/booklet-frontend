@@ -1,4 +1,4 @@
-package com.eunjeong.booklet
+package com.eunjeong.booklet.friendAdd
 
 import android.content.ActivityNotFoundException
 import android.content.ClipData

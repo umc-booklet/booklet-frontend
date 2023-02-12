@@ -1,6 +1,7 @@
 package com.eunjeong.booklet
 
 import android.content.ContentValues.TAG
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.CalendarContract.Attendees.query
@@ -13,6 +14,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.eunjeong.booklet.adapters.FriendListAdapter
 import com.eunjeong.booklet.databinding.ActivityFriendListBinding
 import com.eunjeong.booklet.datas.Friend
+import com.eunjeong.booklet.friendListCheck.FriendListCheckResponse
+import com.eunjeong.booklet.friendListCheck.FriendListCheckService
+import com.eunjeong.booklet.memberInfo.MemberInfoResponse
+import com.eunjeong.booklet.memberInfo.MemberInfoService
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.nio.file.Files.size
 import java.util.*
 import kotlin.collections.ArrayList
@@ -35,6 +45,78 @@ class FriendListActivity : AppCompatActivity() {
         friendRVAdapter = FriendListAdapter(friendList)
         friendRV.adapter = friendRVAdapter
 
+
+
+        val retrofit = Retrofit.Builder()
+            .baseUrl("http://3.35.217.34:8080")
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+
+        val apiService = retrofit.create(FriendListCheckService::class.java)
+        val memberinfoService = retrofit.create(MemberInfoService::class.java)
+        
+        apiService.checkFriendList(1). enqueue(object: Callback<FriendListCheckResponse>{
+            override fun onResponse(
+                call: Call<FriendListCheckResponse>,
+                response: retrofit2.Response<FriendListCheckResponse>
+            ) {
+
+                if(response.isSuccessful){
+                    val responseData = response.body()
+                    if(responseData != null){
+                        Log.d("Retrofit", "서버 연결 성공")
+                        Log.d("Retrofit","Response\nCode: ${responseData.code} Message: ${responseData.message}")
+
+//                        if (responseData.code == 1000) {
+//                            Log.d("responseData.code == 1000", "true")
+//                        }
+                        for(i in responseData.result){
+                            memberinfoService.getCheck(i.friendId).enqueue(object: Callback<MemberInfoResponse>{
+                                override fun onResponse(
+                                    call: Call<MemberInfoResponse>,
+                                    response: Response<MemberInfoResponse>
+                                ) {
+                                    if(response.isSuccessful){
+                                        val responseData2 = response.body().info()
+                                        if(responseData2 != null){
+                                            Log.d("Retrofit", "Response\nCode: ${responseData2.code} Message: ${responseData2.message}")
+                                            friendList.add(Friend(R.drawable.ex_profile1, responseData2.in, responseData2.message)) // 첫번쨰 사진, 두번째 이름, 세번째 id 넣어야함
+                                            Log.d("retrofit array1", friendList.toString())
+                                            //setAdapter(friendList)
+                                            Log.d("array2", friendList.toString())
+                                        }
+                                    }else {
+                                        Log.w(
+                                            "Retrofit",
+                                            "Response Not Successful ${response.code()}"
+                                        )
+                                    }
+                                }
+                                override fun onFailure(call: Call<MemberInfoResponse>, t: Throwable) {
+                                    Log.e("Retrofit", "Error!", t)
+                                    Toast.makeText(this@FriendListActivity, "서버와 통신에 실패했습니다.", Toast.LENGTH_SHORT)
+                                }
+
+                            })
+                        }
+
+
+
+                    }
+                    else {
+                        Log.w("Retrofit", "Response Not Successful ${response.code()}")
+                    }
+                }
+
+
+
+            }
+
+            override fun onFailure(call: Call<FriendListCheckResponse>, t: Throwable) {
+                Log.e("Retrofit Error", "서버 연결 실패", t)
+            }
+
+        })
         friendList.add(Friend(R.drawable.ex_profile1, "이은정", "dkan9634"))
         friendList.add(Friend(R.drawable.ex_profile2, "이은딩", "eunding"))
         friendList.add(Friend(R.drawable.ex_profile1, "김니나", "ninanina"))
@@ -95,3 +177,4 @@ class FriendListActivity : AppCompatActivity() {
 
 
 }
+

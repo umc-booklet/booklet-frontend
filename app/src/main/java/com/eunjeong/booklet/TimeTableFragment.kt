@@ -17,12 +17,6 @@ import com.akribase.timelineview.TimelineView
 import com.eunjeong.booklet.adapters.DayScheduleRVAdapter
 import com.eunjeong.booklet.databinding.ActivityCalendarBinding.inflate
 import com.eunjeong.booklet.databinding.FragmentTimeTableBinding
-import com.github.tlaabs.timetableview.Schedule
-import com.github.tlaabs.timetableview.Time
-import com.islandparadise14.mintable.model.ScheduleDay
-import com.islandparadise14.mintable.model.ScheduleEntity
-import com.islandparadise14.mintable.tableinterface.OnScheduleClickListener
-import com.islandparadise14.mintable.tableinterface.OnScheduleLongClickListener
 import kotlinx.android.synthetic.main.fragment_time_table.*
 import kotlinx.android.synthetic.main.nav_header_setting.*
 import java.lang.reflect.Array.get

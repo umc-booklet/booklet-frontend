@@ -12,6 +12,7 @@ import com.akribase.timelineview.Event
 import com.eunjeong.booklet.Communicator
 import com.eunjeong.booklet.databinding.FragmentTimeTableBinding
 import kotlinx.android.synthetic.main.activity_calendar.*
+import kotlinx.android.synthetic.main.calendar_day_layout.*
 import java.text.DateFormat
 import java.text.ParseException
 import java.text.SimpleDateFormat
@@ -38,6 +39,7 @@ class TimeTableFragment : Fragment() {
         var clickYear = clickedDate?.substring(0, 4)?.toInt() // 년
         var dayName = getDayName(clickYear,clickMonth,clickDay)// 요일
         val checkedPlan = arguments?.getParcelableArrayList<Detail>("Plan") // ArrayList<Detail>
+        Log.d("checkedPlan", checkedPlan.toString())
 
         viewBinding.dayTextView.text = clickDay.toString()
         viewBinding.dayNameTextView.text = dayName
@@ -48,23 +50,44 @@ class TimeTableFragment : Fragment() {
                 var name = i.name
                 var eventList: ArrayList<Event> = arrayListOf()
 
-                var startDateString = i.startYear.toString() + i.startMonth.toString() + i.startDay.toString() + i.startHour.toString() + i.startMinute.toString()
-                var endDateString = i.endYear.toString() + i.endMonth.toString() + i.endDay.toString() + i.endHour.toString() + i.endMinute.toString()
-                Log.d("dateString confirm","startDateString: " + startDateString + " endDateString: " + endDateString)
+                var startDateString = dateConvert(i.startYear, i.startMonth, i.startDay, i.startHour, i.startMinute)
+                var endDateString = dateConvert(i.endYear, i.endMonth, i.endDay, i.endHour, i.endMinute)
+
+                Log.d("dateString confirm", "startDateString: " + startDateString + " endDateString: " + endDateString)
 
                 val timeconversion = Timeconversion()
                 var startDate = timeconversion.timeConversion(startDateString)
                 var endDate = timeconversion.timeConversion(endDateString)
                 Log.d("unixTime", "startDate : $startDate\nendDate : $endDate")
 
-                eventList.apply{
-                    add(Event("$name",startDate, endDate )) }
+                // 만약, EndDate - StartDate > 24*60*60sec 이라면,
+//                var midDateString = String()
+//                var midDate: Long = 0
+//                var midDateString2 = String()
+//                var midDate2: Long = 0
+
+//                if (endDate - startDate >= 24*60*60) {
+//                    midDateString = dateConvert(i.startYear, i.startMonth, i.startDay, 11,0)
+//                    midDateString2 = dateConvert(i.endYear, i.endMonth, i.endDay, 1,0)
+//                    midDate = timeconversion.timeConversion(midDateString)
+//                    midDate2 = timeconversion.timeConversion(midDateString2)
+                    eventList.apply {
+                        add(Event("$name", startDate, endDate))
+//                        add(Event("$name", midDate2, endDate))
+                    }
+//                } else {
+//                    eventList.apply {
+//                        add(Event("$name", startDate, endDate))
+//                    }
+//                }
+
                 viewBinding.timeLineView.timelineEvents = eventList
                 viewBinding.timeLineView.setBackgroundColor(Color.parseColor(i.color + "00"))
                 viewBinding.timeLineView.eventBg = Color.parseColor(i.color)
-
+                }
             }
-        }
+
+
 
 //        viewBinding.fixScheduleTv.text = 하루 종일 일정 이름 넣기
 
@@ -80,6 +103,34 @@ class TimeTableFragment : Fragment() {
         }
 
         return viewBinding.root
+    }
+
+    fun dateConvert(year : Int, mon: Int, day: Int, hour: Int, min: Int ): String {
+        var str = String()
+        var month = String()
+        var days = String()
+        var hours = String()
+        var mins = String()
+
+        if (mon < 10) {
+            month = "0$mon" // mm
+        } else { month = mon.toString() }
+
+        if (day < 10) {
+            days = "0$day" // dd
+        } else { days = day.toString() }
+
+        if (hour < 10) {
+            hours = "0$hour" // hh
+        } else { hours = hour.toString() }
+
+        if (min < 10) {
+            mins = "0$min" // mm
+        } else { mins = min.toString() }
+
+        str = year.toString() + month + days + hours + mins  // yyyyMMddhhmm
+
+        return str
     }
 
     fun getDayName(year: Int?, month: Int?, day: Int?): String {

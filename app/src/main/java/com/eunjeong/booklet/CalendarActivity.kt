@@ -124,6 +124,7 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
                         .add(binding.frameFragment.id, DayScheduleFragment().apply{
                             arguments = Bundle().apply{ // Activity에서 날짜 누르면 그 날짜를 fragment로 전달하기
                                 putString("Date", "${day.date}")
+                                putLong("Id",userInfo.id)
                             }
                         })
                         .addToBackStack("daySchedule").commitAllowingStateLoss()

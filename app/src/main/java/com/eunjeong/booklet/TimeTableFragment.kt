@@ -21,8 +21,9 @@ class TimeTableFragment : Fragment() {
         viewBinding = FragmentTimeTableBinding.inflate(layoutInflater)
 
 
-        // DayScheduleFragment에서 Interface 함수를 통해 보낸 데이터 (날짜만)
+        // DayScheduleFragment 에서 Interface 함수를 통해 보낸 데이터 (날짜만)
         var clickedDate = arguments?.getString("Date")
+
         viewBinding.dayTextView.text = clickedDate
 
         // timeLine
@@ -47,13 +48,4 @@ class TimeTableFragment : Fragment() {
 
         return viewBinding.root
     }
-
-
-
-
-    override fun onActivityCreated(savedInstanceState: Bundle?) {
-        super.onActivityCreated(savedInstanceState)
-    }
-
-
 }

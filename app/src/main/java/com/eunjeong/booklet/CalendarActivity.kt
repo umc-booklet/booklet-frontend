@@ -21,6 +21,8 @@ import androidx.drawerlayout.widget.DrawerLayout
 import androidx.navigation.findNavController
 import com.eunjeong.booklet.databinding.ActivityCalendarBinding
 import com.eunjeong.booklet.databinding.CalendarDayLayoutBinding
+import com.eunjeong.booklet.detailSchedule.DayScheduleFragment
+import com.eunjeong.booklet.detailSchedule.Detail
 import com.eunjeong.booklet.login.LoginActivity
 import com.eunjeong.booklet.login.UserData
 import com.google.android.material.navigation.NavigationView
@@ -691,18 +693,18 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
     // 달력에서 날짜 누르면 DayScheduleFragment가 나오고,
     // DayScheduleFragment에서 버튼을 누르면 TimeTableFragment로 가기 위한 함수
     // interface :  DayScheduleFragment -> timetableFragment
-    override fun GoToTimeTableFragment(clickedDate: String) {
+    override fun GoToTimeTableFragment(clickedDate: String, plan: ArrayList<Detail>) {
         val bundle = Bundle()
         bundle.putString("Date", clickedDate)
+        bundle.putParcelableArrayList("Plan", plan)
 
         val transaction = this.supportFragmentManager.beginTransaction()
-        val timetablefragment = TimeTableFragment()
-        timetablefragment.arguments = bundle
+        val timeTableFragment = TimeTableFragment()
+        timeTableFragment.arguments = bundle
 
-        transaction.replace(binding.frameFragment.id, timetablefragment)
-        transaction.addToBackStack("timetableFragment")
+        transaction.replace(binding.frameFragment.id, timeTableFragment)
+        transaction.addToBackStack("timeTableFragment")
         transaction.commit()
-
     }
 
     // interface : timetableFragment -> DayScheduleFragment
@@ -715,7 +717,7 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         dayschedulefragment.arguments = bundle
 
         transaction.replace(binding.frameFragment.id, dayschedulefragment)
-        transaction.addToBackStack("dayscheduleFragment").commitAllowingStateLoss()
+        transaction.addToBackStack("dayscheduleFragment")
         transaction.commit()
     }
 

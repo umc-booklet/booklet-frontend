@@ -19,6 +19,7 @@ import com.eunjeong.booklet.databinding.BottomSheetShowMembersBinding
 import com.eunjeong.booklet.databinding.CalendarDayLayoutBinding
 import com.eunjeong.booklet.detailSchedule.DayScheduleFragment
 import com.eunjeong.booklet.detailSchedule.Detail
+import com.eunjeong.booklet.detailSchedule.TimeTableFragment
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.navigation.NavigationView
 import com.kizitonwose.calendar.core.*

@@ -10,7 +10,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -18,11 +17,11 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.children
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.navigation.findNavController
 import com.eunjeong.booklet.databinding.ActivityCalendarBinding
 import com.eunjeong.booklet.databinding.CalendarDayLayoutBinding
 import com.eunjeong.booklet.detailSchedule.DayScheduleFragment
 import com.eunjeong.booklet.detailSchedule.Detail
+import com.eunjeong.booklet.detailSchedule.TimeTableFragment
 import com.eunjeong.booklet.login.LoginActivity
 import com.eunjeong.booklet.login.UserData
 import com.google.android.material.navigation.NavigationView
@@ -33,7 +32,6 @@ import com.kizitonwose.calendar.view.ViewContainer
 import kotlinx.android.synthetic.main.activity_calendar.*
 import kotlinx.android.synthetic.main.nav_header_setting.*
 import kotlinx.android.synthetic.main.nav_header_setting.view.*
-import java.text.SimpleDateFormat
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.Month

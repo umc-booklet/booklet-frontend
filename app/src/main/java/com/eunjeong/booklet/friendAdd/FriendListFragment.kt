@@ -1,4 +1,4 @@
-package com.eunjeong.booklet
+package com.eunjeong.booklet.friendAdd
 
 import android.os.Bundle
 import android.util.Log

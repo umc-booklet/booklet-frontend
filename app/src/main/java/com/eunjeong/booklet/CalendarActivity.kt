@@ -3,6 +3,8 @@ package com.eunjeong.booklet
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.os.Parcel
+import android.os.Parcelable
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
@@ -10,7 +12,6 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.ImageButton
 import android.widget.TextView
-import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -18,9 +19,11 @@ import androidx.core.content.ContextCompat
 import androidx.core.view.GravityCompat
 import androidx.core.view.children
 import androidx.drawerlayout.widget.DrawerLayout
-import androidx.navigation.findNavController
 import com.eunjeong.booklet.databinding.ActivityCalendarBinding
 import com.eunjeong.booklet.databinding.CalendarDayLayoutBinding
+import com.eunjeong.booklet.detailSchedule.DayScheduleFragment
+import com.eunjeong.booklet.detailSchedule.Detail
+import com.eunjeong.booklet.detailSchedule.TimeTableFragment
 import com.eunjeong.booklet.login.LoginActivity
 import com.eunjeong.booklet.login.UserData
 import com.google.android.material.navigation.NavigationView
@@ -29,9 +32,7 @@ import com.kizitonwose.calendar.view.MonthDayBinder
 import com.kizitonwose.calendar.view.MonthHeaderFooterBinder
 import com.kizitonwose.calendar.view.ViewContainer
 import kotlinx.android.synthetic.main.activity_calendar.*
-import kotlinx.android.synthetic.main.nav_header_setting.*
 import kotlinx.android.synthetic.main.nav_header_setting.view.*
-import java.text.SimpleDateFormat
 import java.time.DayOfWeek
 import java.time.LocalDate
 import java.time.Month
@@ -116,12 +117,15 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
                             }
                         }
                     }
-                    // 날짜 클릭하면 dayScheduleFragment 나오도록
+                    // 날짜 Click - dayScheduleFragment 이동
+                    // userId, Month, day 넘겨야 함.
                     supportFragmentManager
                         .beginTransaction()
                         .add(binding.frameFragment.id, DayScheduleFragment().apply{
-                            arguments = Bundle().apply{ // Activity에서 날짜 누르면 그 날짜를 fragment로 전달하기
+                            arguments = Bundle().apply{ // Activity 에서 날짜 누르면 그 날짜를 fragment 로 전달
                                 putString("Date", "${day.date}")
+                                putLong("Id", userInfo.id)
+                                Log.d("In Calendar, ClickDate: ", "${day.date}")
                             }
                         })
                         .addToBackStack("daySchedule").commitAllowingStateLoss()
@@ -691,37 +695,36 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
     // 달력에서 날짜 누르면 DayScheduleFragment가 나오고,
     // DayScheduleFragment에서 버튼을 누르면 TimeTableFragment로 가기 위한 함수
     // interface :  DayScheduleFragment -> timetableFragment
-    override fun GoToTimeTableFragment(clickedDate: String) {
+    override fun GoToTimeTableFragment(clickedDate: String, plan: ArrayList<Detail>) {
         val bundle = Bundle()
         bundle.putString("Date", clickedDate)
+        bundle.putParcelableArrayList("Plan", plan)
 
         val transaction = this.supportFragmentManager.beginTransaction()
-        val timetablefragment = TimeTableFragment()
-        timetablefragment.arguments = bundle
+        val timeTableFragment = TimeTableFragment()
+        timeTableFragment.arguments = bundle
 
-        transaction.replace(binding.frameFragment.id, timetablefragment)
-        transaction.addToBackStack("timetableFragment")
+        transaction.replace(binding.frameFragment.id, timeTableFragment)
+        transaction.addToBackStack("timeTableFragment")
         transaction.commit()
 
     }
 
     // interface : timetableFragment -> DayScheduleFragment
     override fun GoToDayScheduleFragment(clickedDate: String) {
+
+
         val bundle = Bundle()
         bundle.putString("Date", clickedDate)
 
         val transaction = this.supportFragmentManager.beginTransaction()
-        val dayschedulefragment = DayScheduleFragment()
-        dayschedulefragment.arguments = bundle
+        val dayScheduleFragment = DayScheduleFragment()
+        dayScheduleFragment.arguments = bundle
 
-        transaction.replace(binding.frameFragment.id, dayschedulefragment)
-        transaction.addToBackStack("dayscheduleFragment").commitAllowingStateLoss()
+        transaction.replace(binding.frameFragment.id, dayScheduleFragment)
+        transaction.addToBackStack("dayScheduleFragment")
         transaction.commit()
     }
-
-
 }
-
-
 
 

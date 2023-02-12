@@ -9,7 +9,6 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
-import com.eunjeong.booklet.FriendAddActivity
 import com.eunjeong.booklet.databinding.DialogRecomfirmBinding
 import com.eunjeong.booklet.databinding.DialogRequestResultBinding
 import com.eunjeong.booklet.databinding.FriendAddListItemBinding

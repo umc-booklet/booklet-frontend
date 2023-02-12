@@ -59,7 +59,7 @@
                 android:value="" />
         </activity>
         <activity
-            android:name=".FriendAddActivity"
+            android:name=".friendAdd.FriendAddActivity"
             android:exported="true"
             android:theme="@style/Theme.Booklet.NoActionBar">
 

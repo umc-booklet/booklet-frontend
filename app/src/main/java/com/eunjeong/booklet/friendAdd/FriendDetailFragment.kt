@@ -1,4 +1,4 @@
-package com.eunjeong.booklet
+package com.eunjeong.booklet.friendAdd
 
 import android.app.Activity
 import android.app.Dialog

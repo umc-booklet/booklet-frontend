@@ -4,10 +4,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:theme="@style/Theme.Transparent">
-<!--    android:background="@android:color/transparent">-->
-
-
+    android:theme="@style/Theme.Transparent"
+    android:background="#4D000000">
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="290dp"
@@ -69,13 +67,28 @@
 
         <FrameLayout
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content">
+            android:layout_height="wrap_content"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent">
+
+            <TextView
+                android:id="@+id/empty_tv"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:text="일정 없음"
+                android:textColor="@color/black"
+                android:textStyle="bold"
+                android:textSize="15sp"
+                android:gravity="center" />
+
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/rvSchedule"
                 android:layout_width="284dp"
                 android:layout_height="match_parent"
-                android:layout_marginTop="75dp"
                 android:layout_marginLeft="20dp"
+                android:layout_marginTop="75dp"
                 android:layout_marginRight="20dp"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"

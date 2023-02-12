@@ -1,12 +1,9 @@
 package com.eunjeong.booklet
 
-import android.content.ContentValues.TAG
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.provider.CalendarContract.Attendees.query
 import android.util.Log
-import android.widget.Filterable
 import android.widget.SearchView
 import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -14,9 +11,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.eunjeong.booklet.adapters.FriendListAdapter
 import com.eunjeong.booklet.databinding.ActivityFriendListBinding
 import com.eunjeong.booklet.datas.Friend
+import com.eunjeong.booklet.friendAdd.FriendAddActivity
 import com.eunjeong.booklet.login.UserData
-import java.nio.file.Files.size
-import java.util.*
 import kotlin.collections.ArrayList
 
 class FriendListActivity : AppCompatActivity() {

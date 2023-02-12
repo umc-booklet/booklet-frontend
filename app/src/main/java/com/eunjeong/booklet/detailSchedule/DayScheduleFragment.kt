@@ -71,10 +71,10 @@ class DayScheduleFragment : Fragment() {
         var id = arguments?.getLong("Id")?.toInt() // userId
         var clickDay = clickDate?.substring(clickDate.length - 2)?.toInt() // 일
         var clickMonth = clickDate?.substring(5, clickDate.length - 3)?.toInt() // 월
-        var clickYear = clickDate?.substring(0, 3)?.toInt() // 년
+        var clickYear = clickDate?.substring(0, 4)?.toInt() // 년
         var dayName = getDayName(clickYear,clickMonth,clickDay)// 요일
 
-        Log.d("date confirm", "year: " + clickYear + "day: " + clickDay + "month: " + clickMonth)
+        Log.d("date confirm", "year: " + clickYear + " day: " + clickDay + " month: " + clickMonth)
 
         viewBinding.dayTextView.text = clickDay.toString()
         viewBinding.dayNameTextView.text = dayName
@@ -173,19 +173,19 @@ class DayScheduleFragment : Fragment() {
             // 4. 요일 반환
 
             if (dayOfWeekNumber == 1) {
-                dayName = "수요일"
-            } else if (dayOfWeekNumber == 2) {
-                dayName = "목요일"
-            } else if (dayOfWeekNumber == 3) {
-                dayName = "금요일"
-            } else if (dayOfWeekNumber == 4) {
-                dayName = "토요일"
-            } else if (dayOfWeekNumber == 5) {
-                dayName = "일요일"
-            } else if (dayOfWeekNumber == 6) {
                 dayName = "월요일"
-            } else if (dayOfWeekNumber == 7) {
+            } else if (dayOfWeekNumber == 2) {
                 dayName = "화요일"
+            } else if (dayOfWeekNumber == 3) {
+                dayName = "수요일"
+            } else if (dayOfWeekNumber == 4) {
+                dayName = "목요일"
+            } else if (dayOfWeekNumber == 5) {
+                dayName = "금요일"
+            } else if (dayOfWeekNumber == 6) {
+                dayName = "토요일"
+            } else if (dayOfWeekNumber == 7) {
+                dayName = "일요일"
             }
         }
         return dayName

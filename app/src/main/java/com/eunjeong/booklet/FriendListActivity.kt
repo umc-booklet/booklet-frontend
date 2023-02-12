@@ -85,7 +85,7 @@ class FriendListActivity : AppCompatActivity() {
         })
 
         // 이미지 버튼 - 친구 추가 액티비티 연결
-        viewBinding.addfriend.setOnClickListener {
+        viewBinding.friendAddBtn.setOnClickListener {
             val intent = Intent(this, FriendAddActivity::class.java)
             startActivity(intent)
         }

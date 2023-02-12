@@ -15,6 +15,7 @@ import androidx.core.view.children
 import androidx.core.view.isVisible
 import com.eunjeong.booklet.databinding.ActivityCalendarBinding
 import com.eunjeong.booklet.databinding.ActivityGroupCalendarBinding
+import com.eunjeong.booklet.databinding.BottomSheetShowMembersBinding
 import com.eunjeong.booklet.databinding.CalendarDayLayoutBinding
 import com.google.android.material.bottomsheet.BottomSheetDialog
 import com.google.android.material.navigation.NavigationView
@@ -40,7 +41,7 @@ import java.util.*
 class GroupCalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSelectedListener,
     Communicator {
     private lateinit var binding: ActivityGroupCalendarBinding
-    private lateinit var tbinding: CalendarDayLayoutBinding
+    private lateinit var tbinding: BottomSheetShowMembersBinding
     private val titleRes: Int? = null
     private val today = LocalDate.now()
     private var selectedDate: LocalDate? = null
@@ -56,7 +57,7 @@ class GroupCalendarActivity : AppCompatActivity(), NavigationView.OnNavigationIt
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         binding = ActivityGroupCalendarBinding.inflate(layoutInflater)
-        tbinding = CalendarDayLayoutBinding.inflate(layoutInflater)
+        tbinding = BottomSheetShowMembersBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
         //deletePlanByPlanId(31)
@@ -81,12 +82,15 @@ class GroupCalendarActivity : AppCompatActivity(), NavigationView.OnNavigationIt
 
             // 레이아웃 클릭 시 그룹 인원 bottomsheetdialog 호출
             binding.showSingleMember.setOnClickListener {
+                tbinding.pf1.isVisible = true
+                // tbinding.pfImg1.setImageResource() -> 사용자 프사 설정
+                tbinding.pfName1.text = UserInformation.groupMemberUserIdArray[0]
                 bottomSheetDialog.show()
             }
         }
         else if (UserInformation.groupMemberUserIdArray.size == 2) {
             binding.showTwoMembers.isVisible = true
-            binding.profileImg1.setImageResource(R.drawable.ex_profile1)
+            binding.profileImg1.setImageResource(R.drawable.img)
             binding.profileImg2.setImageResource(R.drawable.ex_profile2)
 
             // 레이아웃 클릭 시 그룹 인원 bottomsheetdialog 호출
@@ -229,401 +233,13 @@ class GroupCalendarActivity : AppCompatActivity(), NavigationView.OnNavigationIt
                         textView.setBackgroundResource(R.drawable.today_circle)
                     }
 
-                    if (day.date == selectedDate) {
-                        dayView.setBackgroundResource(R.drawable.selected_border)
-                    } else if (day.date != selectedDate) { // 한 번 더 누르면 border 제거
-                        dayView.background = null
-                    }
+//                    if (day.date == selectedDate) {
+//                        dayView.setBackgroundResource(R.drawable.selected_border)
+//                    } else if (day.date != selectedDate) { // 한 번 더 누르면 border 제거
+//                        dayView.background = null
+//                    }
                 }
 
-
-                // 단순 일정 추가 함수
-                // 여기에 매개변수 더 추가. addevent 함수를 바로 아래 retrofit 함수에 넣고
-                // startmonth/day, endmonth/day 다르면 으로 조건 바꾸기
-                // 하루종일 스위치 -> 일정 추가 액티비티에서 스위치 켜져있으면 추가하는 데이터를 0~23:59로 조작
-                fun addEvent(
-                    eventNum: TextView,
-                    eventTitle: String,
-                    selectedColor: String,
-                    startYear: Int,
-                    startMonth: Int,
-                    startDay: Int,
-                    endYear: Int,
-                    endMonth: Int,
-                    endDay: Int
-                ) {
-                    val sdayString = "%d-%02d-%02d".format(startYear, startMonth, startDay)
-                    val sdayLocalDate = LocalDate.parse(sdayString, DateTimeFormatter.ISO_DATE)
-                    val edayString = "%d-%02d-%02d".format(endYear, endMonth, endDay)
-                    val edayLocalDate = LocalDate.parse(edayString, DateTimeFormatter.ISO_DATE)
-
-                    if (selectedColor == "pink") {
-                        // 시작 날짜와 끝 날짜가 다른 경우
-                        if (sdayLocalDate != edayLocalDate) {
-                            if (day.date == sdayLocalDate) {
-                                preventRepetition = true
-
-                                if (firstEvent.background == null) {
-                                    p = 1
-                                } else if (secondEvent.background == null) {
-                                    p = 2
-                                } else if (thirdEvent.background == null) {
-                                    p = 3
-                                } else if (fourthEvent.background == null) {
-                                    p = 4
-                                }
-
-                                eventNum.text = eventTitle
-                                eventNum.setBackgroundResource(R.drawable.event_on_calendar_corner_pink_start)
-                                eventNum.setTextColor(
-                                    ContextCompat.getColor(
-                                        applicationContext,
-                                        R.color.eventpinktext
-                                    )
-                                )
-
-                            } else if (day.date.isBefore(edayLocalDate) && day.date.isAfter(
-                                    sdayLocalDate
-                                )
-                            ) {
-                                eventNum.setBackgroundResource(R.drawable.event_on_calendar_corner_pink_middle)
-                                eventNum.setTextColor(
-                                    ContextCompat.getColor(
-                                        applicationContext,
-                                        R.color.eventpinktext
-                                    )
-                                )
-                            } else if (day.date == edayLocalDate) {
-                                eventNum.setBackgroundResource(R.drawable.event_on_calendar_corner_pink_end)
-                                eventNum.setTextColor(
-                                    ContextCompat.getColor(
-                                        applicationContext,
-                                        R.color.eventpinktext
-                                    )
-                                )
-                                p = 0
-                                preventRepetition = false
-                            }
-
-                        }
-                        // 시작 날짜 == 끝 날짜지만 시간만 다른 경우
-                        else if (sdayLocalDate == edayLocalDate && day.date == sdayLocalDate) {
-                            preventRepetition = true
-                            eventNum.text = eventTitle
-                            eventNum.setBackgroundResource(R.drawable.event_on_calendar_corner_pink)
-                            eventNum.setTextColor(
-                                ContextCompat.getColor(
-                                    applicationContext,
-                                    R.color.eventpinktext
-                                )
-                            )
-                            preventRepetition = false
-                        }
-
-                    }
-                    else if (selectedColor == "green") {
-                        // 시작 날짜와 끝 날짜가 다른 경우
-                        if (sdayLocalDate != edayLocalDate) {
-                            if (day.date == sdayLocalDate) {
-                                preventRepetition = true
-
-                                if (firstEvent.background == null) {
-                                    p = 1
-                                } else if (secondEvent.background == null) {
-                                    p = 2
-                                } else if (thirdEvent.background == null) {
-                                    p = 3
-                                } else if (fourthEvent.background == null) {
-                                    p = 4
-                                }
-
-                                eventNum.text = eventTitle
-                                eventNum.setBackgroundResource(R.drawable.event_on_calendar_corner_green_start)
-                                eventNum.setTextColor(
-                                    ContextCompat.getColor(
-                                        applicationContext,
-                                        R.color.eventgreentext
-                                    )
-                                )
-
-                            } else if (day.date.isBefore(edayLocalDate) && day.date.isAfter(
-                                    sdayLocalDate
-                                )
-                            ) {
-                                eventNum.setBackgroundResource(R.drawable.event_on_calendar_corner_green_middle)
-                                eventNum.setTextColor(
-                                    ContextCompat.getColor(
-                                        applicationContext,
-                                        R.color.eventgreentext
-                                    )
-                                )
-                            } else if (day.date == edayLocalDate) {
-                                eventNum.setBackgroundResource(R.drawable.event_on_calendar_corner_green_end)
-                                eventNum.setTextColor(
-                                    ContextCompat.getColor(
-                                        applicationContext,
-                                        R.color.eventgreentext
-                                    )
-                                )
-                                p = 0
-                                preventRepetition = false
-                            }
-                        }
-                        // 시작 날짜 == 끝 날짜지만 시간만 다른 경우
-                        else if (sdayLocalDate == edayLocalDate && day.date == sdayLocalDate) {
-                            preventRepetition = true
-                            eventNum.text = eventTitle
-                            eventNum.setBackgroundResource(R.drawable.event_on_calendar_corner_green)
-                            eventNum.setTextColor(
-                                ContextCompat.getColor(
-                                    applicationContext,
-                                    R.color.eventgreentext
-                                )
-                            )
-                            preventRepetition = false
-                        }
-
-                    }
-                    else if (selectedColor == "purple") {
-                        // 시작 날짜와 끝 날짜가 다른 경우
-                        if (sdayLocalDate != edayLocalDate) {
-                            if (day.date == sdayLocalDate) {
-                                preventRepetition = true
-
-                                if (firstEvent.background == null) {
-                                    p = 1
-                                } else if (secondEvent.background == null) {
-                                    p = 2
-                                } else if (thirdEvent.background == null) {
-                                    p = 3
-                                } else if (fourthEvent.background == null) {
-                                    p = 4
-                                }
-
-                                eventNum.text = eventTitle
-                                eventNum.setBackgroundResource(R.drawable.event_on_calendar_corner_purple_start)
-                                eventNum.setTextColor(
-                                    ContextCompat.getColor(
-                                        applicationContext,
-                                        R.color.eventpurpletext
-                                    )
-                                )
-
-                            } else if (day.date.isBefore(edayLocalDate) && day.date.isAfter(
-                                    sdayLocalDate
-                                )
-                            ) {
-                                eventNum.setBackgroundResource(R.drawable.event_on_calendar_corner_purple_middle)
-                                eventNum.setTextColor(
-                                    ContextCompat.getColor(
-                                        applicationContext,
-                                        R.color.eventpurpletext
-                                    )
-                                )
-                            } else if (day.date == edayLocalDate) {
-                                eventNum.setBackgroundResource(R.drawable.event_on_calendar_corner_purple_end)
-                                eventNum.setTextColor(
-                                    ContextCompat.getColor(
-                                        applicationContext,
-                                        R.color.eventpurpletext
-                                    )
-                                )
-                                p = 0
-                                preventRepetition = false
-                            }
-
-                        }
-                        // 시작 날짜 == 끝 날짜지만 시간만 다른 경우
-                        else if (sdayLocalDate == edayLocalDate && day.date == sdayLocalDate) {
-                            preventRepetition = true
-                            eventNum.text = eventTitle
-                            eventNum.setBackgroundResource(R.drawable.event_on_calendar_corner_purple)
-                            eventNum.setTextColor(
-                                ContextCompat.getColor(
-                                    applicationContext,
-                                    R.color.eventpurpletext
-                                )
-                            )
-
-                            preventRepetition = false
-                        }
-
-                    }
-                }
-
-
-                // 현재 달력 한 칸에 있는 일정의 위치를 반영하여 일정 추가하는 함수
-                fun addEventOnPosition(
-                    eventTitle: String,
-                    selectedColor: String,
-                    startYear: Int,
-                    startMonth: Int,
-                    startDay: Int,
-                    endYear: Int,
-                    endMonth: Int,
-                    endDay: Int
-                ) {
-                    val sdayString = "%d-%02d-%02d".format(startYear, startMonth, startDay)
-                    val sdayLocalDate = LocalDate.parse(sdayString, DateTimeFormatter.ISO_DATE)
-                    val edayString = "%d-%02d-%02d".format(endYear, endMonth, endDay)
-                    val edayLocalDate = LocalDate.parse(edayString, DateTimeFormatter.ISO_DATE)
-
-                    if (sdayLocalDate != edayLocalDate) {
-                        p = 0
-
-                        when (p) {
-
-                            0 -> {
-                                if (firstEvent.background == null) {
-                                    addEvent(
-                                        firstEvent,
-                                        eventTitle,
-                                        selectedColor,
-                                        startYear,
-                                        startMonth,
-                                        startDay,
-                                        endYear,
-                                        endMonth,
-                                        endDay
-                                    )
-                                } else if (secondEvent.background == null) {
-                                    addEvent(
-                                        secondEvent,
-                                        eventTitle,
-                                        selectedColor,
-                                        startYear,
-                                        startMonth,
-                                        startDay,
-                                        endYear,
-                                        endMonth,
-                                        endDay
-                                    )
-                                } else if (thirdEvent.background == null) {
-                                    addEvent(
-                                        thirdEvent,
-                                        eventTitle,
-                                        selectedColor,
-                                        startYear,
-                                        startMonth,
-                                        startDay,
-                                        endYear,
-                                        endMonth,
-                                        endDay
-                                    )
-                                } else if (fourthEvent.background == null) {
-                                    addEvent(
-                                        fourthEvent,
-                                        eventTitle,
-                                        selectedColor,
-                                        startYear,
-                                        startMonth,
-                                        startDay,
-                                        endYear,
-                                        endMonth,
-                                        endDay
-                                    )
-                                }
-
-                            }
-                            1 -> addEvent(
-                                firstEvent,
-                                eventTitle,
-                                selectedColor,
-                                startYear,
-                                startMonth,
-                                startDay,
-                                endYear,
-                                endMonth,
-                                endDay
-                            )
-                            2 -> addEvent(
-                                secondEvent,
-                                eventTitle,
-                                selectedColor,
-                                startYear,
-                                startMonth,
-                                startDay,
-                                endYear,
-                                endMonth,
-                                endDay
-                            )
-                            3 -> addEvent(
-                                thirdEvent,
-                                eventTitle,
-                                selectedColor,
-                                startYear,
-                                startMonth,
-                                startDay,
-                                endYear,
-                                endMonth,
-                                endDay
-                            )
-                            4 -> addEvent(
-                                fourthEvent,
-                                eventTitle,
-                                selectedColor,
-                                startYear,
-                                startMonth,
-                                startDay,
-                                endYear,
-                                endMonth,
-                                endDay
-                            )
-                        }
-
-                    } else {
-                        if (firstEvent.background == null) {
-                            addEvent(
-                                firstEvent,
-                                eventTitle,
-                                selectedColor,
-                                startYear,
-                                startMonth,
-                                startDay,
-                                endYear,
-                                endMonth,
-                                endDay
-                            )
-                        } else if (secondEvent.background == null) {
-                            addEvent(
-                                secondEvent,
-                                eventTitle,
-                                selectedColor,
-                                startYear,
-                                startMonth,
-                                startDay,
-                                endYear,
-                                endMonth,
-                                endDay
-                            )
-                        } else if (thirdEvent.background == null) {
-                            addEvent(
-                                thirdEvent,
-                                eventTitle,
-                                selectedColor,
-                                startYear,
-                                startMonth,
-                                startDay,
-                                endYear,
-                                endMonth,
-                                endDay
-                            )
-                        } else if (fourthEvent.background == null) {
-                            addEvent(
-                                fourthEvent,
-                                eventTitle,
-                                selectedColor,
-                                startYear,
-                                startMonth,
-                                startDay,
-                                endYear,
-                                endMonth,
-                                endDay
-                            )
-                        }
-                    }
-
-                }
 
 
                 fun addUserPlanOnCalendar(userId: String) {
@@ -654,16 +270,22 @@ class GroupCalendarActivity : AppCompatActivity(), NavigationView.OnNavigationIt
                                         val ey = responseData.result[i].endYear
                                         val em = responseData.result[i].endMonth
                                         val ed = responseData.result[i].endDay
-                                        addEventOnPosition(
-                                            eventName,
-                                            eventColor,
-                                            sy,
-                                            sm,
-                                            sd,
-                                            ey,
-                                            em,
-                                            ed
-                                        )
+
+                                        val sdayString = "%d-%02d-%02d".format(sy, sm, sd)
+                                        val sdayLocalDate = LocalDate.parse(sdayString, DateTimeFormatter.ISO_DATE)
+                                        val edayString = "%d-%02d-%02d".format(ey, em, ed)
+                                        val edayLocalDate = LocalDate.parse(edayString, DateTimeFormatter.ISO_DATE)
+
+                                        if (day.date == sdayLocalDate) {
+                                            dayView.setBackgroundColor(resources.getColor(R.color.eventpink))
+                                        }
+                                        else if (day.date.isBefore(edayLocalDate) && day.date.isAfter(sdayLocalDate)) {
+                                            dayView.setBackgroundColor(resources.getColor(R.color.eventpink))
+                                        }
+                                        else if (day.date == edayLocalDate) {
+                                            dayView.setBackgroundColor(resources.getColor(R.color.eventpink))
+                                        }
+//
 
                                     }
                                 } else {

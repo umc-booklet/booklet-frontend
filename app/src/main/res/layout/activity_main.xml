@@ -8,33 +8,13 @@
     android:gravity="center"
     tools:context=".MainActivity">
 
-    <TextView
-        android:layout_width="match_parent"
-        android:layout_height="255dp"/>
 
-    <TextView
-        android:id="@+id/titleText"
+    <ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:gravity="center"
-        android:text="Booklet"
-        android:textColor="@color/black"
-        android:textSize="46sp"
-        android:textStyle="bold"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.498"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        app:layout_constraintVertical_bias="0.341" />
+        android:src="@drawable/booklet_logo"
+        android:layout_marginTop="100dp"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="이제는 친구도 예약하자!"
-        android:textSize="16sp"
-        android:textColor="#8C8C8C"
-        app:layout_constraintVertical_bias="0.189" />
     <TextView
         android:layout_width="match_parent"
         android:layout_height="60dp"/>

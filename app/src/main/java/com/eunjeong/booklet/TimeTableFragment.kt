@@ -34,7 +34,7 @@ class TimeTableFragment : Fragment() {
         }
         viewBinding.timeLineView.timelineEvents = eventList
 //        viewBinding.timeLineView.eventBg = "#FFFFFF".toColorInt() //색깔 구현???
- //       viewBinding.timeLineView.setBackgroundColor("#E6E6E6".toColorInt())
+        //       viewBinding.timeLineView.setBackgroundColor("#E6E6E6".toColorInt())
 
         //        viewBinding.fixScheduleTv.text = 하루종일인 일정 이름 넣기
 

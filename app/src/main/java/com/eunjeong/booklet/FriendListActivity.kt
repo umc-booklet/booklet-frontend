@@ -147,6 +147,12 @@ class FriendListActivity : AppCompatActivity() {
                 return false
             }
         })
+
+        // 이미지 버튼 - 친구 추가 액티비티 연결
+        viewBinding.addfriend.setOnClickListener {
+            val intent = Intent(this, FriendAddActivity::class.java)
+            startActivity(intent)
+        }
     }
 
     private fun filter(text: String) {

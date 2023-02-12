@@ -6,7 +6,7 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     tools:context=".FriendListActivity">
-    
+
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="50dp"
@@ -70,13 +70,13 @@
             app:queryHint="검색어를 입력하시오"
             app:iconifiedByDefault="false" />
     </LinearLayout>
-    
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/friendRecyclerView"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:layout_marginTop="15dp"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager"
-       />
+        />
 
 </LinearLayout>

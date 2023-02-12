@@ -87,7 +87,7 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
             Log.d("데이터 전달 성공 in Cal", userInfo?.name.toString() + userInfo?.userId.toString() + userInfo?.img.toString() + userInfo.id.toString())
         }
 
-        binding.btnFriendlist.setOnClickListener {
+        binding.btnAddGroup.setOnClickListener {
             val intent = Intent(this, FriendListActivity::class.java)
             intent.putExtra("UserInfo", userInfo)
             startActivity(intent)
@@ -592,15 +592,15 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
             }
         }
 
-//        binding.btnFriendlist.setOnClickListener {
-//            val intent = Intent(this, FriendListActivity::class.java)
-//            startActivity(intent)
-//        }
-
-        binding.btnAddFriend.setOnClickListener {
+        binding.btnGroupChoice.setOnClickListener {
             val intent = Intent(this, GroupChoiceActivity::class.java)
             startActivity(intent)
         }
+
+//        binding.btnAddFriend.setOnClickListener {
+//            val intent = Intent(this, GroupChoiceActivity::class.java)
+//            startActivity(intent)
+//        }
 
         binding.btnMenu.setOnClickListener {
             binding.drawerLayout.openDrawer((GravityCompat.END))

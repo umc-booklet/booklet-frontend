@@ -21,9 +21,10 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.*
 import retrofit2.converter.gson.GsonConverterFactory
 
-class FriendListFragment(id: String?) : Fragment() {
+class FriendListFragment(id: Long) : Fragment() {
     private lateinit var viewBinding: FragmentFriendListBinding
     private val idr = id
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -61,9 +62,9 @@ class FriendListFragment(id: String?) : Fragment() {
                     override fun onResponse(call: Call<List<Info>>, response: Response<List<Info>>) {
                         if (response.isSuccessful){
                             val responseData = response.body()
+                            var searchList = ArrayList<Info>() // 새로 초기화
                             if (responseData != null){
                                 for (i in responseData ) {
-                                    var searchList = ArrayList<Info>() // 새로 초기화
                                     searchList.add(i)
 
                                     if (searchList.size == 0) {
@@ -74,6 +75,8 @@ class FriendListFragment(id: String?) : Fragment() {
 
                                     }
                                 }
+                            } else {
+                                viewBinding.emptyView.isVisible = true
                             }
                         } else {
                             Log.w("Retrofit", "Response Not Successful ${response.code()}")
@@ -97,6 +100,7 @@ class FriendListFragment(id: String?) : Fragment() {
 
     private fun setAdapter(list : ArrayList<Info>){
 
+        Log.d("In FriendListFrag", idr.toString())
         val mAdapter = FriendAddListRVAdapter(list, idr)
         viewBinding.rvData.adapter = mAdapter
         viewBinding.rvData.layoutManager = LinearLayoutManager(activity)

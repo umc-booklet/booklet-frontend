@@ -1,6 +1,5 @@
 package com.eunjeong.booklet.adapters
 
-import android.content.Context
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.view.LayoutInflater
@@ -8,13 +7,8 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
-import com.eunjeong.booklet.FriendRequestActivity
-import com.eunjeong.booklet.databinding.ActivityFriendRequestBinding
-import com.eunjeong.booklet.databinding.DialogRecomfirmAcceptBinding
-import com.eunjeong.booklet.databinding.DialogReconfirmRejectBinding
 import com.eunjeong.booklet.databinding.FriendRequestItemBinding
 import com.eunjeong.booklet.datas.FriendRequest
-import kotlinx.coroutines.NonDisposableHandle.parent
 
 class FriendRequestRVAdapter(private var requestlist: ArrayList<FriendRequest>): RecyclerView.Adapter<FriendRequestRVAdapter.DataViewHolder>() {
 
@@ -43,7 +37,7 @@ class FriendRequestRVAdapter(private var requestlist: ArrayList<FriendRequest>):
                 if (!check) {
                     viewBinding.okbtn.setBackgroundColor(Color.parseColor("#6792FF"))
                     check = true
-                    accept(viewBinding.root) // 실제 추가 기능
+                    //accept(viewBinding.root) // 실제 추가 기능
 
                 } else {
                     viewBinding.okbtn.setBackgroundColor(Color.parseColor("#ABC2FB"))
@@ -54,7 +48,7 @@ class FriendRequestRVAdapter(private var requestlist: ArrayList<FriendRequest>):
             }
             // '거절' 버튼 눌렀을 때
             viewBinding.nobtn.setOnClickListener {
-                reject(position, viewBinding.root)
+                //reject(position, viewBinding.root)
 
             }
         }
@@ -72,56 +66,56 @@ class FriendRequestRVAdapter(private var requestlist: ArrayList<FriendRequest>):
     override fun getItemCount(): Int = requestlist.size
 
     // 수락시 행동
-    fun accept(parent: View) {
-
-        val binding: DialogRecomfirmAcceptBinding = DialogRecomfirmAcceptBinding.inflate(LayoutInflater.from(parent.context))
-        val build = AlertDialog.Builder(parent.context).apply {
-            setView(binding.root)
-        }
-
-        val dialog = build.create()
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT)); // 배경 투명
-        dialog.setCancelable(true) // 뒷 배경 클릭시 취소 X
-        dialog.show()
-
-        binding.okBtn.setOnClickListener { // Ok 버튼 클릭시 지우기
-            // 친구 요청 수락 !
-            // 친구 목록에 넣어야 함.
-
-            dialog.dismiss()
-        }
-
-        binding.noBtn.setOnClickListener { // no 버튼 클릭시 지우기
-            dialog.dismiss()
-        }
-    }
+//    fun accept(parent: View) {
+//
+//        val binding: DialogRecomfirmAcceptBinding = DialogRecomfirmAcceptBinding.inflate(LayoutInflater.from(parent.context))
+//        val build = AlertDialog.Builder(parent.context).apply {
+//            setView(binding.root)
+//        }
+//
+//        val dialog = build.create()
+//        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT)); // 배경 투명
+//        dialog.setCancelable(true) // 뒷 배경 클릭시 취소 X
+//        dialog.show()
+//
+//        binding.okBtn.setOnClickListener { // Ok 버튼 클릭시 지우기
+//            // 친구 요청 수락 !
+//            // 친구 목록에 넣어야 함.
+//
+//            dialog.dismiss()
+//        }
+//
+//        binding.noBtn.setOnClickListener { // no 버튼 클릭시 지우기
+//            dialog.dismiss()
+//        }
+//    }
 
     // 거절시 행동
-    fun reject(position: Int, parent: View) {
-
-        val binding: DialogReconfirmRejectBinding = DialogReconfirmRejectBinding.inflate(LayoutInflater.from(parent.context))
-        val build = AlertDialog.Builder(parent.context).apply {
-            setView(binding.root)
-        }
-
-        val dialog = build.create()
-        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT)); // 배경 투명
-        dialog.setCancelable(true) // 뒷 배경 클릭시 취소 X
-        dialog.show()
-
-        binding.okBtn.setOnClickListener { // Ok 버튼 클릭시 지우기
-            requestlist.removeAt(position)
-            notifyItemRemoved(position)
-            notifyDataSetChanged() // 반드시
-
-            //서버에서도 지워야 함.
-
-            dialog.dismiss()
-        }
-        binding.noBtn.setOnClickListener { // no 버튼 클릭시 지우기
-            dialog.dismiss()
-        }
-    }
+//    fun reject(position: Int, parent: View) {
+//
+//        val binding: DialogReconfirmRejectBinding = DialogReconfirmRejectBinding.inflate(LayoutInflater.from(parent.context))
+//        val build = AlertDialog.Builder(parent.context).apply {
+//            setView(binding.root)
+//        }
+//
+//        val dialog = build.create()
+//        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT)); // 배경 투명
+//        dialog.setCancelable(true) // 뒷 배경 클릭시 취소 X
+//        dialog.show()
+//
+//        binding.okBtn.setOnClickListener { // Ok 버튼 클릭시 지우기
+//            requestlist.removeAt(position)
+//            notifyItemRemoved(position)
+//            notifyDataSetChanged() // 반드시
+//
+//            //서버에서도 지워야 함.
+//
+//            dialog.dismiss()
+//        }
+//        binding.noBtn.setOnClickListener { // no 버튼 클릭시 지우기
+//            dialog.dismiss()
+//        }
+//    }
 
 
 }

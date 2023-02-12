@@ -4,6 +4,8 @@ import android.content.Intent
 import android.graphics.Color
 import android.graphics.drawable.ColorDrawable
 import android.os.Bundle
+import android.os.Parcel
+import android.os.Parcelable
 import android.util.Log
 import android.view.View
 import androidx.appcompat.app.AlertDialog
@@ -66,14 +68,9 @@ class LoginActivity : AppCompatActivity(){
                             if (responseData.code == 1000) { // 로그인 성공
                                 // ** 메인 화면 이동
                                 val intent = Intent(this@LoginActivity, CalendarActivity::class.java)
+                                var userData = UserData(responseData.result.name, responseData.result.userId, responseData.result.profileImage, responseData.result.id)
+                                intent.putExtra("UserInfo", userData)
                                 startActivity(intent)
-
-                                // ** {result} 전달
-                                val intent2 = Intent(this@LoginActivity, FriendAddActivity::class.java)
-                                intent2.putExtra("Name", responseData.result.name)
-                                intent2.putExtra("UserId", responseData.result.userId)
-                                intent2.putExtra("Img", responseData.result.profileImage)
-
                             }
 
                             if (responseData.code != 1000) { // 로그인 실패
@@ -81,6 +78,7 @@ class LoginActivity : AppCompatActivity(){
                             }
 
                             if (responseData.code == 1000 && viewBinding.auto.isChecked) { // 자동 로그인 체크 & 로그인 성공
+                                //StartForResult
                             }
                         }
                     }
@@ -121,4 +119,35 @@ class LoginActivity : AppCompatActivity(){
         binding.ookBtn.setOnClickListener { // Ok 버튼 클릭하면 지우기
             dialog.dismiss() }
     }
+}
+
+class UserData(var name: String?, var userId: String?, var img: String?, var id: Long): Parcelable {
+    constructor(parcel: Parcel) : this(
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readString(),
+        parcel.readLong()) {
+    }
+
+    override fun writeToParcel(parcel: Parcel, flags: Int) {
+        parcel.writeString(name)
+        parcel.writeString(userId)
+        parcel.writeString(img)
+        parcel.writeLong(id)
+    }
+
+    override fun describeContents(): Int {
+        return 0
+    }
+
+    companion object CREATOR : Parcelable.Creator<UserData> {
+        override fun createFromParcel(parcel: Parcel): UserData {
+            return UserData(parcel)
+        }
+
+        override fun newArray(size: Int): Array<UserData?> {
+            return arrayOfNulls(size)
+        }
+    }
+
 }

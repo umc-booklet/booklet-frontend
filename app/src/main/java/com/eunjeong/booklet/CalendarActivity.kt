@@ -3,6 +3,7 @@ package com.eunjeong.booklet
 import android.content.Intent
 import android.graphics.Color
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
@@ -21,6 +22,7 @@ import androidx.navigation.findNavController
 import com.eunjeong.booklet.databinding.ActivityCalendarBinding
 import com.eunjeong.booklet.databinding.CalendarDayLayoutBinding
 import com.eunjeong.booklet.login.LoginActivity
+import com.eunjeong.booklet.login.UserData
 import com.google.android.material.navigation.NavigationView
 import com.kizitonwose.calendar.core.*
 import com.kizitonwose.calendar.view.MonthDayBinder
@@ -28,6 +30,7 @@ import com.kizitonwose.calendar.view.MonthHeaderFooterBinder
 import com.kizitonwose.calendar.view.ViewContainer
 import kotlinx.android.synthetic.main.activity_calendar.*
 import kotlinx.android.synthetic.main.nav_header_setting.*
+import kotlinx.android.synthetic.main.nav_header_setting.view.*
 import java.text.SimpleDateFormat
 import java.time.DayOfWeek
 import java.time.LocalDate
@@ -47,6 +50,7 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
     private var selectedDate: LocalDate? = null
     var checkDaySelected: Boolean = true
     lateinit var activityResultLauncher: ActivityResultLauncher<Intent>
+    private lateinit var userInfo: UserData
 
     var eventTitle = ""
     var switchChecked = ""
@@ -69,8 +73,14 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         tbinding = CalendarDayLayoutBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        if (intent.hasExtra("UserInfo")) {
+            userInfo = intent.getParcelableExtra<UserData>("UserInfo")!!
+            Log.d("데이터 전달 성공 in Cal", userInfo?.name.toString() + userInfo?.userId.toString() + userInfo?.img.toString() + userInfo.id.toString())
+        }
+
         binding.btnAddGroup.setOnClickListener {
             val intent = Intent(this, FriendListActivity::class.java)
+            intent.putExtra("UserInfo", userInfo)
             startActivity(intent)
         }
 
@@ -658,7 +668,12 @@ class CalendarActivity : AppCompatActivity(), NavigationView.OnNavigationItemSel
         val headerView = navView.getHeaderView(0)
         val back = headerView.findViewById<ImageButton>(R.id.backbtn)
         val edit = headerView.findViewById<Button>(R.id.editbtn)
-        //val signOut = headerView.findViewById<Button>(R.id.signOutBtn)
+
+        // 받아온 데이터로 내 정보 표출
+        headerView.name.text = userInfo.name
+        headerView.code.text = userInfo.userId
+        //headerView.img.setImageResource(userInfo.img.toInt())
+
         back.setOnClickListener { // drawer 닫기
             drawerLayout.closeDrawer(GravityCompat.END) }
 

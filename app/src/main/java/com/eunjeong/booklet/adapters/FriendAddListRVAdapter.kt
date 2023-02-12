@@ -10,8 +10,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.RecyclerView
 import com.eunjeong.booklet.FriendAddActivity
-import com.eunjeong.booklet.FriendListFragment
-import com.eunjeong.booklet.databinding.DialogRecomfirmAcceptBinding
+import com.eunjeong.booklet.databinding.DialogRecomfirmBinding
+import com.eunjeong.booklet.databinding.DialogRequestResultBinding
 import com.eunjeong.booklet.databinding.FriendAddListItemBinding
 import com.eunjeong.booklet.friendAdd.FriendAddResponse
 import com.eunjeong.booklet.friendAdd.FriendAddService
@@ -23,7 +23,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 
-class FriendAddListRVAdapter(private var friendList: ArrayList<Info>, id: String?): RecyclerView.Adapter<FriendAddListRVAdapter.DataViewHolder>() {
+class FriendAddListRVAdapter(private var friendList: ArrayList<Info>, id: Long): RecyclerView.Adapter<FriendAddListRVAdapter.DataViewHolder>() {
     private val myId = id?.toInt()
 
     interface OnItemClickListener {
@@ -35,7 +35,7 @@ class FriendAddListRVAdapter(private var friendList: ArrayList<Info>, id: String
         listener = itemClickListener
     }
 
-    inner class DataViewHolder(private val viewBinding: FriendAddListItemBinding) :
+    inner class DataViewHolder(val viewBinding: FriendAddListItemBinding) :
         RecyclerView.ViewHolder(viewBinding.root) {
 
         fun bind(item: Info) {
@@ -52,7 +52,7 @@ class FriendAddListRVAdapter(private var friendList: ArrayList<Info>, id: String
             }
 
             viewBinding.frAddBtn.setOnClickListener {
-                var friendId = item.userId.toInt() // 검색 결과로 나온 친구 ID
+                var friendId = item.id.toInt() // 검색 결과로 나온 친구 ID
                 var friendName = item.name // 검색 결과로 나온 친구 이름
                 if (myId != null) {
                     cuDialog(viewBinding.root, friendName, myId!!, friendId)
@@ -76,7 +76,7 @@ class FriendAddListRVAdapter(private var friendList: ArrayList<Info>, id: String
 
     // 친구 추가 재확인 알람 Dialog
     fun cuDialog(view: View, s: String, my: Int, you: Int) {
-        val binding: DialogRecomfirmAcceptBinding = DialogRecomfirmAcceptBinding.inflate(LayoutInflater.from(view.context))
+        val binding: DialogRecomfirmBinding = DialogRecomfirmBinding.inflate(LayoutInflater.from(view.context))
         val build = AlertDialog.Builder(view.context).apply {
             setView(binding.root) }
 
@@ -87,16 +87,14 @@ class FriendAddListRVAdapter(private var friendList: ArrayList<Info>, id: String
         dialog.show()
 
         binding.okBtn.setOnClickListener {
-            addFriend(my, you)
+            addFriend(my, you, view)
             dialog.dismiss() }
 
         binding.noBtn.setOnClickListener {
             dialog.dismiss()
         }
     }
-    private fun addFriend(userId: Int, friendId: Int) {
-
-        lateinit var a : FriendAddActivity
+    private fun addFriend(userId: Int, friendId: Int, view : View) {
 
         // retrofit 객체
         val retrofit = Retrofit.Builder()
@@ -106,13 +104,13 @@ class FriendAddListRVAdapter(private var friendList: ArrayList<Info>, id: String
 
         val friendAddService = retrofit.create(FriendAddService::class.java)
 
-        // 로그인 해결시 변경
         friendAddService.friendRequest(userId, friendId).enqueue(object : Callback<FriendAddResponse>{
             override fun onResponse(call: Call<FriendAddResponse>, response: Response<FriendAddResponse>) {
                 if (response.isSuccessful){
                     val responseData = response.body()
                     if (responseData != null) {
                         Log.d("Retrofit","Response\nCode: ${responseData.code} Message: ${responseData.message}")
+                        cuDialog2(view ,responseData.message)
                     }
                 } else {
                     Log.w("Retrofit", "Response Not Successful ${response.code()}")
@@ -121,8 +119,24 @@ class FriendAddListRVAdapter(private var friendList: ArrayList<Info>, id: String
 
             override fun onFailure(call: Call<FriendAddResponse>, t: Throwable) {
                 Log.e("Retrofit", "Error!", t)
-                Toast.makeText(a.applicationContext, "서버 통신 오류", Toast.LENGTH_SHORT)
+                Toast.makeText(view.context, "서버 통신 오류", Toast.LENGTH_SHORT)
             }
         })
+    }
+
+    // 친구 요청 결과 알림 Dialog
+    fun cuDialog2(view: View, s: String) {
+        val binding: DialogRequestResultBinding = DialogRequestResultBinding.inflate(LayoutInflater.from(view.context))
+        val build = AlertDialog.Builder(view.context).apply {
+            setView(binding.root) }
+
+        val dialog = build.create()
+        dialog.window?.setBackgroundDrawable(ColorDrawable(Color.TRANSPARENT)); // 배경 투명
+        binding.message.text = s
+        dialog.setCancelable(true)
+        dialog.show()
+
+        binding.okBtn.setOnClickListener {
+            dialog.dismiss() }
     }
 }

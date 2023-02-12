@@ -9,9 +9,11 @@ import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.widget.Toolbar
 import com.eunjeong.booklet.databinding.ActivityFriendAddBinding
+import com.eunjeong.booklet.login.UserData
 
 class FriendAddActivity : AppCompatActivity() {
     private lateinit var viewBinding: ActivityFriendAddBinding
+    private lateinit var userInfo: UserData
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         viewBinding = ActivityFriendAddBinding.inflate(layoutInflater)
@@ -24,21 +26,22 @@ class FriendAddActivity : AppCompatActivity() {
         actionBar?.setDisplayHomeAsUpEnabled(true) // 앱바에 뒤로가기 버튼 만들기
 
         // 데이터 받아 오기
-        val myName = intent.getStringExtra("Name")
-        val myId =  intent.getStringExtra("UserId")
-        val myImg = intent.getStringExtra("Img")
+        if (intent.hasExtra("UserInfo")) {
+            userInfo = intent.getParcelableExtra<UserData>("UserInfo")!!
+            Log.d("데이터 전달 성공 in FriendAddActivity", userInfo?.name.toString() + userInfo?.userId.toString() + userInfo?.img.toString() + userInfo.id.toString())
+        }
 
         // 각 Fragment 인자로 넘겨 주기
         // 내 프로필 Fragment
         supportFragmentManager
             .beginTransaction()
-            .replace(viewBinding.profilecontainer.id, MyProfileFragment(myName, myId, myImg))
+            .replace(viewBinding.profilecontainer.id, MyProfileFragment(userInfo.name, userInfo.userId, userInfo.img))
             .commitAllowingStateLoss()
 
         // 친구 추가 속에 친구 목록 Fragment
         supportFragmentManager
             .beginTransaction()
-            .replace(viewBinding.friendcontainer.id, FriendListFragment(myId))
+            .replace(viewBinding.friendcontainer.id, FriendListFragment(userInfo.id))
             .commitAllowingStateLoss()
 
         // 친구 요청 목록 버튼 클릭시 액티비티 교체

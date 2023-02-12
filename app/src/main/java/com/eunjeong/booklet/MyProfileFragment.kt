@@ -20,6 +20,7 @@ class MyProfileFragment(name: String?, id: String?, img: String?) : Fragment() {
     private val idr = id
     private val imgr = img
 
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -30,6 +31,11 @@ class MyProfileFragment(name: String?, id: String?, img: String?) : Fragment() {
         viewBinding.infoName.text = namer // 이름
         viewBinding.infoCode.text = idr // 코드
         //viewBinding.infoImage.setImageResource(item.profileImage) // 이미지
+
+        Log.d("In MyProfile", "Name : " + namer + "Id : " + idr + "Img : " + imgr)
+
+
+
 
         // '복사하기' 눌렀을 때 클립보드에 복사.
         viewBinding.infoCopy.setOnClickListener {

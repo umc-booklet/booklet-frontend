@@ -19,7 +19,7 @@
             android:layout_height="100dp"
             android:layout_marginTop="-170dp"
             android:elevation="10dp"
-            android:src="@drawable/user"
+            android:src="@drawable/user_basic"
             app:layout_constraintBottom_toTopOf="@+id/info"
             app:layout_constraintEnd_toEndOf="@+id/info"
             app:layout_constraintStart_toStartOf="@+id/info"

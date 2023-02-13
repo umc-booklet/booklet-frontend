@@ -27,7 +27,7 @@
             android:layout_width="0dp"
             android:layout_height="wrap_content"
             android:layout_marginStart="20dp"
-            android:src="@drawable/user"
+            android:src="@drawable/user_basic"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toStartOf="@id/fr_name"
             app:layout_constraintHorizontal_weight="0.2"

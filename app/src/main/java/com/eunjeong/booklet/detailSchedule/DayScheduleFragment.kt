@@ -71,13 +71,14 @@ class DayScheduleFragment : Fragment() {
         var id = arguments?.getLong("Id")?.toInt() // userId
         var clickDay = clickDate?.substring(clickDate.length - 2)?.toInt() // 일
         var clickMonth = clickDate?.substring(5, clickDate.length - 3)?.toInt() // 월
-        var clickYear = clickDate?.substring(0, 3)?.toInt() // 년
+        var clickYear = clickDate?.substring(0, 4)?.toInt() // 년
         var dayName = getDayName(clickYear,clickMonth,clickDay)// 요일
 
-        Log.d("date confirm", "year: " + clickYear + "day: " + clickDay + "month: " + clickMonth)
+        Log.d("date confirm", "year: " + clickYear + " day: " + clickDay + " month: " + clickMonth)
 
         viewBinding.dayTextView.text = clickDay.toString()
         viewBinding.dayNameTextView.text = dayName
+        viewBinding.emptyTv.isVisible = true
         // 하루에 여러 planId 가능
         // userId, Month 이용해 해당 월 planId 전부 조회
         // 그 중 clickDay 와 startDay 또는 endDay 가 같은 planId 만 추출
@@ -93,11 +94,11 @@ class DayScheduleFragment : Fragment() {
                     val responseData = response.body()
 
                     if (responseData != null) {
-                        if (responseData.result.isEmpty()) {
-                            viewBinding.emptyTv.isVisible = true
+                        if (responseData.result.size == 0) {
+                            //viewBinding.emptyTv.isVisible = true
                         } else {
                             for (i in responseData.result) {
-                                viewBinding.emptyTv.isVisible = false
+                                //viewBinding.emptyTv.isVisible = false
                                 if (i.startDay == clickDay || clickDay == i.endDay) {
                                     planId.add(i.id)
 
@@ -149,40 +150,44 @@ class DayScheduleFragment : Fragment() {
         val mAdapter = DayScheduleRVAdapter(list)
         viewBinding.rvSchedule.adapter = mAdapter
         viewBinding.rvSchedule.layoutManager = LinearLayoutManager(activity)
+
+        viewBinding.emptyTv.isVisible = false
     }
 
 
     fun getDayName(year: Int?, month: Int?, day: Int?): String {
-
-        // 1. LocalDate 생성
-        val date: LocalDate = LocalDate.of(2021, 12, 25)
-        // LocalDateTime date = LocalDateTime.of(2021, 12, 25, 1, 15, 20);
-        //System.out.println(date) // // 2021-12-25
-
-        // 2. DayOfWeek 객체 구하기
-        val dayOfWeek: DayOfWeek = date.getDayOfWeek()
-
-        // 3. 숫자 요일 구하기
-        val dayOfWeekNumber: Int = dayOfWeek.getValue()
-
-        // 4. 요일 반환
         var dayName = String()
-        if (dayOfWeekNumber == 1) {
-            dayName = "월요일"
-        } else if (dayOfWeekNumber == 2) {
-            dayName = "화요일"
-        } else if (dayOfWeekNumber == 3) {
-            dayName = "수요일"
-        } else if (dayOfWeekNumber == 4) {
-            dayName = "목요일"
-        } else if (dayOfWeekNumber == 5) {
-            dayName = "금요일"
-        } else if (dayOfWeekNumber == 6) {
-            dayName= "토요일"
-        } else if (dayOfWeekNumber == 7) {
-            dayName = "일요일"
-        }
 
+        if (year != null && month != null && day != null) {
+            // 1. LocalDate 생성
+            val date: LocalDate = LocalDate.of(year, month, day)
+            // LocalDateTime date = LocalDateTime.of(2021, 12, 25, 1, 15, 20);
+            //System.out.println(date) // // 2021-12-25
+
+            // 2. DayOfWeek 객체 구하기
+            val dayOfWeek: DayOfWeek = date.getDayOfWeek()
+
+            // 3. 숫자 요일 구하기
+            val dayOfWeekNumber: Int = dayOfWeek.getValue()
+
+            // 4. 요일 반환
+
+            if (dayOfWeekNumber == 1) {
+                dayName = "월요일"
+            } else if (dayOfWeekNumber == 2) {
+                dayName = "화요일"
+            } else if (dayOfWeekNumber == 3) {
+                dayName = "수요일"
+            } else if (dayOfWeekNumber == 4) {
+                dayName = "목요일"
+            } else if (dayOfWeekNumber == 5) {
+                dayName = "금요일"
+            } else if (dayOfWeekNumber == 6) {
+                dayName = "토요일"
+            } else if (dayOfWeekNumber == 7) {
+                dayName = "일요일"
+            }
+        }
         return dayName
     }
 }

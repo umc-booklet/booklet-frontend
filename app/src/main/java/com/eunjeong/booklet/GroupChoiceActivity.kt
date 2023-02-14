@@ -1,5 +1,6 @@
 package com.eunjeong.booklet
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -93,7 +94,10 @@ class GroupChoiceActivity : AppCompatActivity() {
                 Toast.makeText(this, "그룹 추가는 최대 10명까지 가능합니다.", Toast.LENGTH_SHORT).show()
             }
             else{ // 최대 10명 선택했으면 제대로 넘어가는 코드 작성
-                Toast.makeText(this, "${groupList.size}", Toast.LENGTH_SHORT).show()
+                //Toast.makeText(this, "${groupList.size}", Toast.LENGTH_SHORT).show()
+                // 영상 촬영 위해 추가
+                val intent = Intent(this, GroupCalendarActivity::class.java)
+                startActivity(intent)
             }
         }
     }

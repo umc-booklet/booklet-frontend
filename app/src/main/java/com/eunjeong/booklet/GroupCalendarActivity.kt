@@ -93,7 +93,7 @@ class GroupCalendarActivity : AppCompatActivity(), NavigationView.OnNavigationIt
         }
         else if (UserInformation.groupMemberUserIdArray.size == 2) {
             binding.showTwoMembers.isVisible = true
-            binding.profileImg1.setImageResource(R.drawable.img)
+            //binding.profileImg1.setImageResource(R.drawable.img)
             binding.profileImg2.setImageResource(R.drawable.ex_profile2)
 
             // 레이아웃 클릭 시 그룹 인원 bottomsheetdialog 호출
@@ -286,6 +286,9 @@ class GroupCalendarActivity : AppCompatActivity(), NavigationView.OnNavigationIt
                                             dayView.setBackgroundColor(resources.getColor(R.color.eventpink))
                                         }
                                         else if (day.date == edayLocalDate) {
+                                            dayView.setBackgroundColor(resources.getColor(R.color.eventpink))
+                                        }
+                                        else if (day.date == today.plusDays(14)) {
                                             dayView.setBackgroundColor(resources.getColor(R.color.eventpink))
                                         }
 //

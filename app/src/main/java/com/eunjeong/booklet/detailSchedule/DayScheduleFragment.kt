@@ -79,13 +79,14 @@ class DayScheduleFragment : Fragment() {
         viewBinding.dayTextView.text = clickDay.toString()
         viewBinding.dayNameTextView.text = dayName
         viewBinding.emptyTv.isVisible = true
+
         // 하루에 여러 planId 가능
         // userId, Month 이용해 해당 월 planId 전부 조회
         // 그 중 clickDay 와 startDay 또는 endDay 가 같은 planId 만 추출
         // for 문 이용해 조회한 planId 반복해 세부 일정 조회
         // {planId} 로 세부 일정 조회 기능
 
-        val planId = arrayListOf<Int>()
+        var planId = arrayListOf<Int>()
         val detailPlan = arrayListOf<Detail>()
         Log.d("planId1", planId.toString()) //*********
         if (id != null && clickMonth != null && clickDay != null) {
@@ -109,7 +110,7 @@ class DayScheduleFragment : Fragment() {
                                                     val responseData2 = response.body()
                                                     if (responseData2 != null) {
                                                         Log.d("Retrofit","ResponseCode: ${responseData2.code} Message: ${responseData2.message}")
-                                                        detailPlan.add(responseData2.result)
+                                                        detailPlan += responseData2.result
                                                         setAdapter(detailPlan) // Adapter 연결
                                                         Log.d("detailPlan2", detailPlan.toString())
                                                     }

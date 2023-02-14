@@ -95,6 +95,8 @@ class SignUpActivity : AppCompatActivity() {
                 dialog.show()
             }
 
+            finish()
+
         }
 
     }

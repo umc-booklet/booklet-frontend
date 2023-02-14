@@ -226,7 +226,7 @@ class AddScheduleActivity : AppCompatActivity() {
         val checkDaySelected = bundle!!.getString("checkDaySelected")
         if (checkDaySelected != null) { // 선택된 요일이 있는 경우
             val selectedYear = bundle.getString("selectedYear") // 연
-            val selectedMonth = bundle.getString("selectedMonth") // 월
+            var selectedMonth = bundle.getString("selectedMonth") // 월
             val selectedDay = bundle.getString("selectedDay") // 일
             var selectedDayofWeek = bundle.getString("selectedDayofWeek") // 요일
 
@@ -234,6 +234,44 @@ class AddScheduleActivity : AppCompatActivity() {
             val selecteddayLocalDate = LocalDate.parse(selecteddayString, DateTimeFormatter.ISO_DATE)
             selectedCurrentDate = selecteddayLocalDate
 
+            when (selectedMonth) {
+                "JANUARY" -> {
+                    selectedMonth = "1"
+                }
+                "FEBRUARY" -> {
+                    selectedMonth = "2"
+                }
+                "MARCH" -> {
+                    selectedMonth = "3"
+                }
+                "APRIL" -> {
+                    selectedMonth = "4"
+                }
+                "MAY" -> {
+                    selectedMonth = "5"
+                }
+                "JUNE" -> {
+                    selectedMonth = "6"
+                }
+                "JULY" -> {
+                    selectedMonth = "7"
+                }
+                "AUGUST" -> {
+                    selectedMonth = "8"
+                }
+                "SEPTEMBER" -> {
+                    selectedMonth = "9"
+                }
+                "OCTOBER" -> {
+                    selectedMonth = "10"
+                }
+                "NOVEMBER" -> {
+                    selectedMonth = "11"
+                }
+                "DECEMBER" -> {
+                    selectedMonth = "12"
+                }
+            }
             when (selectedDayofWeek) {
                 "SUNDAY" -> {
                     selectedDayofWeek = "일"
@@ -267,9 +305,6 @@ class AddScheduleActivity : AppCompatActivity() {
             val todayDay = bundle.getString("todayDay") // 일
             var todayDayofWeek = bundle.getString("todayDayofWeek") // 요일
 
-            val selecteddayString = "%d-%02d-%02d".format(todayYear!!.toInt(), todayMonth!!.toInt(), todayDay!!.toInt())
-            val selecteddayLocalDate = LocalDate.parse(selecteddayString, DateTimeFormatter.ISO_DATE)
-            selectedCurrentDate = selecteddayLocalDate
 
             when (todayMonth) {
                 "JANUARY" -> {
@@ -332,6 +367,10 @@ class AddScheduleActivity : AppCompatActivity() {
                     todayDayofWeek = "토"
                 }
             } // 요일 한글로 변경
+
+            val selecteddayString = "%d-%02d-%02d".format(todayYear!!.toInt(), todayMonth!!.toInt(), todayDay!!.toInt())
+            val selecteddayLocalDate = LocalDate.parse(selecteddayString, DateTimeFormatter.ISO_DATE)
+            selectedCurrentDate = selecteddayLocalDate
 
             binding.startDate.text = "%s월 %s일 (%s)".format(todayMonth, todayDay, todayDayofWeek)
             binding.endDate.text = "%s월 %s일 (%s)".format(todayMonth, todayDay, todayDayofWeek)
@@ -534,11 +573,11 @@ class AddScheduleActivity : AppCompatActivity() {
             val intent = Intent(this, CalendarActivity::class.java).apply {
 
                 if (binding.switchAllDay.isChecked) {
-                    val addPlanInfo = PlanRequest(UserInformation.memberId, eventTitle, "", eventColor, nonStringStartDate!!.year, nonStringStartDate!!.monthValue, nonStringStartDate!!.dayOfMonth, 0, 0, nonStringStartDate!!.year, nonStringStartDate!!.monthValue, nonStringStartDate!!.dayOfMonth, 23, 59)
+                    val addPlanInfo = PlanRequest(2, eventTitle, "", eventColor, nonStringStartDate!!.year, nonStringStartDate!!.monthValue, nonStringStartDate!!.dayOfMonth, 0, 0, nonStringStartDate!!.year, nonStringStartDate!!.monthValue, nonStringStartDate!!.dayOfMonth, 23, 59)
                     addPlanOnServer(addPlanInfo)
                 }
                 else {
-                    val addPlanInfo = PlanRequest(UserInformation.memberId, eventTitle, "", eventColor, nonStringStartDate!!.year, nonStringStartDate!!.monthValue, nonStringStartDate!!.dayOfMonth, startTimePicker.hour, startTimePicker.minute, nonStringEndDate!!.year, nonStringEndDate!!.monthValue, nonStringEndDate!!.dayOfMonth, endTimePicker.hour, endtimePicker.minute)
+                    val addPlanInfo = PlanRequest(2, eventTitle, "", eventColor, nonStringStartDate!!.year, nonStringStartDate!!.monthValue, nonStringStartDate!!.dayOfMonth, startTimePicker.hour, startTimePicker.minute, nonStringEndDate!!.year, nonStringEndDate!!.monthValue, nonStringEndDate!!.dayOfMonth, endTimePicker.hour, endtimePicker.minute)
                     addPlanOnServer(addPlanInfo)
                 }
             }

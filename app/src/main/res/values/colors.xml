@@ -41,5 +41,6 @@
     <color name="eventgreen">#EEFFF2</color>
     <color name="eventgreentext">#277E35</color>
     <color name="textBlue">#0669FD</color>
+    <color name="windowBackgorund">#FFFFFF</color>
 
 </resources>

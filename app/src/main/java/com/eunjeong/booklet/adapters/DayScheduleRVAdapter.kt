@@ -1,11 +1,18 @@
 package com.eunjeong.booklet.adapters
 
+import android.content.Context
 import android.graphics.Color
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import androidx.core.content.ContextCompat
+import androidx.core.content.ContextCompat.getColor
+import androidx.core.content.res.ResourcesCompat.getColor
 import androidx.recyclerview.widget.RecyclerView
+import com.bumptech.glide.load.engine.Resource
+import com.eunjeong.booklet.R
 import com.eunjeong.booklet.databinding.DayScheduleItemBinding
 import com.eunjeong.booklet.detailSchedule.Detail
+import com.google.android.material.color.MaterialColors.getColor
 
 
 class DayScheduleRVAdapter(private var detailList: ArrayList<Detail>):
@@ -26,15 +33,15 @@ RecyclerView.Adapter<DayScheduleRVAdapter.ScheduleViewHolder>() {
 
             // 막대 색
             var tempColor = detail.color
-            viewBinding.dayScheduleRectangle.setColorFilter(Color.parseColor(tempColor)) // 막대 색 바꾸기
-            viewBinding.tvDayScheduleTitle.setTextColor(Color.parseColor(tempColor)) // 막대 색에 따라 글자 색도 바꾸기
+            viewBinding.dayScheduleRectangle.setColorFilter(R.color.eventpink) // 막대 색 바꾸기
+            viewBinding.tvDayScheduleTitle.setTextColor(R.color.eventpinktext) // 막대 색에 따라 글자 색도 바꾸기
 
             // 오전 / 오후 설정
-            if (detail.startHour <= 12) { viewBinding.tvBar1.text = "오전"
-            } else { viewBinding.tvBar1.text = "오후" }
+            if (detail.startHour <= 12) { viewBinding.tvBar1.text = "오전 "
+            } else { viewBinding.tvBar1.text = "오후 " }
 
-            if (detail.endHour <= 12) { viewBinding.tvBar5.text = "오전"
-            } else { viewBinding.tvBar5.text = "오후" }
+            if (detail.endHour <= 12) { viewBinding.tvBar5.text = "오전 "
+            } else { viewBinding.tvBar5.text = "오후 " }
 
             // 맨 왼쪽 이미지뷰
 //            if (schedule.currentStatus == 0){ // 달력 Image 뜨게
